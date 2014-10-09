@@ -11,6 +11,7 @@
 
   <modules>
     <module>api</module>
+    <module>impl</module>
   </modules>
 
   <properties>
@@ -86,7 +87,7 @@
             <testCompilerArguments> <Xlint /> </testCompilerArguments>
             <testCompilerArgument>-Xlint:-serial</testCompilerArgument>
             <!-- End of maven compiler args hack -->
-            <encoding>${project.build.sourceEncoding</encoding>
+            <encoding>${project.build.sourceEncoding}</encoding>
             <showDeprecation>true</showDeprecation>
             <showWarnings>true</showWarnings>
             <source>${maven.compiler.source}</source>
