@@ -25,8 +25,11 @@ public final class SetSchemaImpl extends AbstractSchema implements SetSchema {
   }
 
   @Override
-  public SetSchema asSetSchema() {
-    return this;
+  public String getName() {
+    return String.format(
+        "set<%s>",
+        mElementSchema.getName()
+    );
   }
 
   @Override

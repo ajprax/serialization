@@ -20,4 +20,9 @@ public final class PrimitiveSchemaImpl extends AbstractSchema {
   public Type getType() {
     return mType;
   }
+
+  @Override
+  public String getName() {
+    return mType.name();
+  }
 }

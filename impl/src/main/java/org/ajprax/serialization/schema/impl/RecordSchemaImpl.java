@@ -35,11 +35,6 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
   }
 
   @Override
-  public RecordSchema asRecordSchema() {
-    return this;
-  }
-
-  @Override
   public ImmutableMap<String, Schema> getFieldSchemas() {
     return mFieldSchemas;
   }

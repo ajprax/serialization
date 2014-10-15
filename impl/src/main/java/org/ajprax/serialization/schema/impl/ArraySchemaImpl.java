@@ -25,6 +25,14 @@ public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema
   }
 
   @Override
+  public String getName() {
+    return String.format(
+        "array<%s>",
+        mElementSchema.getName()
+    );
+  }
+
+  @Override
   public ArraySchema asArraySchema() {
     return this;
   }

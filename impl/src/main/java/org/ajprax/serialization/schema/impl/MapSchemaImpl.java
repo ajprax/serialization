@@ -29,8 +29,12 @@ public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
   }
 
   @Override
-  public MapSchema asMapSchema() {
-    return this;
+  public String getName() {
+    return String.format(
+        "map<%s, %s>",
+        mKeySchema.getName(),
+        mValueSchema.getName()
+    );
   }
 
   @Override

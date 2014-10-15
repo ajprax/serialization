@@ -25,8 +25,11 @@ public final class OptionalSchemaImpl extends AbstractSchema implements Optional
   }
 
   @Override
-  public OptionalSchema asOptionalSchema() {
-    return this;
+  public String getName() {
+    return String.format(
+        "optional<%s>",
+        mElementSchema.getName()
+    );
   }
 
   @Override

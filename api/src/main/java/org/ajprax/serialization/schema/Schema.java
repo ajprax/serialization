@@ -1,8 +1,5 @@
 package org.ajprax.serialization.schema;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 public interface Schema {
   /** Schema types. */
   public enum Type {
@@ -21,31 +18,15 @@ public interface Schema {
     FLOAT_BIG,
     BOOLEAN,
     STRING,
-    EXTENSION,
     ENUM,
+    EXTENSION,
     ARRAY,
+    FIXED_SIZE_ARRAY,
     SET,
     MAP,
     UNION,
     OPTIONAL,
     RECORD;
-  }
-
-  public static interface Builder {
-    Type getType();
-    Builder withName(String name);
-    String getName();
-    Builder withElementSchema(Schema elementSchema);
-    Schema getElementSchema();
-    Builder withKeySchema(Schema keySchema);
-    Schema getKeySchema();
-    Builder withValueSchema(Schema valueSchema);
-    Schema getValueSchema();
-    Builder withBranchSchemas(ImmutableList<Schema> branchSchemas);
-    ImmutableList<Schema> getBranchSchemas();
-    Builder withFieldSchemas(ImmutableMap<String, Schema> fieldSchemas);
-    ImmutableMap<String, Schema> getFieldSchemas();
-    Schema build();
   }
 
   /**
@@ -59,38 +40,47 @@ public interface Schema {
   String getName();
 
   /**
+   * @return This Schema as an EnumSchema if its Type is {@link Type#ENUM}.
+   */
+  EnumSchema asEnumSchema();
+
+  /**
+   * @return This Schema as an ExtensionSchema if its Type is {@link Type#EXTENSION}.
+   */
+  ExtensionSchema asExtensionSchema();
+
+  /**
    * @return This Schema as an ArraySchema if its Type is {@link Type#ARRAY}.
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not an Array.
    */
   ArraySchema asArraySchema();
 
   /**
-   * @return This Schema as a SetSchema if its Type is {@link Type#SET}
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not a Set.
+   * @return This Schema as a FixedSizeArraySchema if its Type is {@link Type#FIXED_SIZE_ARRAY}.
+   */
+  FixedSizeArraySchema asFixedSizeArraySchema();
+
+  /**
+   * @return This Schema as a SetSchema if its Type is {@link Type#SET}.
    */
   SetSchema asSetSchema();
 
   /**
-   * @return This Schema as a MapSchema if its type is {@link Type#MAP}
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not a Map.
+   * @return This Schema as a MapSchema if its type is {@link Type#MAP}.
    */
   MapSchema asMapSchema();
 
   /**
-   * @return This Schema as a UnionSchema if its type is {@link Type#UNION}
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not a Union.
+   * @return This Schema as a UnionSchema if its type is {@link Type#UNION}.
    */
   UnionSchema asUnionSchema();
 
   /**
-   * @return This Schema as an OptionalSchema if its type is {@link Type#OPTIONAL}
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not Optional.
+   * @return This Schema as an OptionalSchema if its type is {@link Type#OPTIONAL}.
    */
   OptionalSchema asOptionalSchema();
 
   /**
-   * @return This Schema as a RecordSchema if its type is {@link Type#RECORD}
-   * @throws org.ajprax.serialization.errors.TypeMismatchException if this Schema is not an Record.
+   * @return This Schema as a RecordSchema if its type is {@link Type#RECORD}.
    */
   RecordSchema asRecordSchema();
 }
