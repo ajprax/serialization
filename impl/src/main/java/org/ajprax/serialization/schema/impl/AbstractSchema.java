@@ -1,5 +1,6 @@
 package org.ajprax.serialization.schema.impl;
 
+import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.ArraySchema;
 import org.ajprax.serialization.schema.EnumSchema;
 import org.ajprax.serialization.schema.ExtensionSchema;
@@ -55,4 +56,16 @@ public abstract class AbstractSchema implements Schema {
   public RecordSchema asRecordSchema() {
     return (RecordSchema) this;
   }
+
+  @Override
+  public boolean equals(
+      final Object obj
+  ) {
+    return recursiveEquals(obj, ImmutableSet.of());
+  }
+
+  public abstract boolean recursiveEquals(
+      final Object obj,
+      final ImmutableSet<String> parentRecordNames
+  );
 }

@@ -26,5 +26,47 @@ public class TestRecordSchemaBuilderImpl {
         linked.getName(),
         linked.asRecordSchema().getFieldSchemas().get("tail").asOptionalSchema().getElementSchema().getName()
     );
+
+    final SchemaBuilder.RecordSchemaBuilder rsb = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final Schema linkedList = rsb
+        .setName("LinkedList")
+        .setFieldSchema(
+            "head",
+            SchemaBuilderImpl
+                .create(Schema.Type.EXTENSION)
+                .asExtensionSchemaBuilder()
+                .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
+                .build()
+        )
+        .setFieldSchema(
+            "tail",
+            SchemaBuilderImpl.create(Schema.Type.OPTIONAL)
+                .asOptionalSchemaBuilder()
+                .setElementSchema(rsb.getPlaceholderSchema())
+                .build()
+        )
+        .build();
+
+    final SchemaBuilder.RecordSchemaBuilder rsb2 = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final Schema linkedList2 = rsb2
+        .setName("LinkedList")
+        .setFieldSchema(
+            "head",
+            SchemaBuilderImpl
+                .create(Schema.Type.EXTENSION)
+                .asExtensionSchemaBuilder()
+                .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
+                .build()
+        )
+        .setFieldSchema(
+            "tail",
+            SchemaBuilderImpl.create(Schema.Type.OPTIONAL)
+                .asOptionalSchemaBuilder()
+                .setElementSchema(rsb2.getPlaceholderSchema())
+                .build()
+        )
+        .build();
+
+    Assert.assertEquals(linkedList, linkedList2);
   }
 }

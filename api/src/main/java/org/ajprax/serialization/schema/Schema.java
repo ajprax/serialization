@@ -1,5 +1,7 @@
 package org.ajprax.serialization.schema;
 
+import com.google.common.collect.ImmutableSet;
+
 public interface Schema {
   /** Schema types. */
   public enum Type {
@@ -83,4 +85,20 @@ public interface Schema {
    * @return This Schema as a RecordSchema if its type is {@link Type#RECORD}.
    */
   RecordSchema asRecordSchema();
+
+  /**
+   * Returns true if this Schema and obj are the same Schema.
+   *
+   * This method should not be called directly. Calling {@link #equals(Object)} internally will call
+   * this method.
+   *
+   * Breaks recursive schema loops by assuming that two record schemas in the same schema type tree
+   * with the same name are the same schema.
+   *
+   * @param obj Object to check for equality with this Schema.
+   * @param parentRecordNames Names of record schemas found above the current level in a possibly
+   *     recursive schema type tree.
+   * @return Whether this Schema and obj ar ethe same Schema.
+   */
+  boolean recursiveEquals(Object obj, ImmutableSet<String> parentRecordNames);
 }

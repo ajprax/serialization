@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.ajprax.serialization.schema.RecordSchema;
@@ -47,6 +48,14 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
           "May not call getFieldSchemas on a placeholder Schema until the corresponding Builder has been built."
       );
       return mFieldSchemas;
+    }
+
+    @Override
+    public boolean recursiveEquals(
+        final Object obj,
+        final ImmutableSet<String> parentRecordNames
+    ) {
+      return RecordSchemaImpl.recursiveEqualsImpl(this, obj, parentRecordNames);
     }
   }
 

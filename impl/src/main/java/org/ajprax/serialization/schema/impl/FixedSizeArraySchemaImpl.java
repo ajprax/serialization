@@ -1,5 +1,9 @@
 package org.ajprax.serialization.schema.impl;
 
+import java.util.Objects;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.FixedSizeArraySchema;
 import org.ajprax.serialization.schema.Schema;
 
@@ -45,5 +49,34 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
         mSize,
         mElementSchema.getName()
     );
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(getClass())
+        .add("type", getType())
+        .add("size", getSize())
+        .add("element_schema", getElementSchema())
+        .toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getType(), getSize(), getElementSchema());
+  }
+
+  @Override
+  public boolean recursiveEquals(
+      final Object obj,
+      final ImmutableSet<String> parentRecordNames
+  ) {
+    if (obj == null || !(obj instanceof FixedSizeArraySchema)) {
+      return false;
+    } else {
+      final FixedSizeArraySchema that = (FixedSizeArraySchema) obj;
+      return Objects.equals(this.getType(), that.getType())
+          && Objects.equals(this.getSize(), that.getSize())
+          && this.getElementSchema().recursiveEquals(that.getElementSchema(), parentRecordNames);
+    }
   }
 }

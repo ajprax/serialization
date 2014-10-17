@@ -1,6 +1,9 @@
 package org.ajprax.serialization.schema.impl;
 
+import java.util.Objects;
+
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.UnionSchema;
@@ -56,5 +59,28 @@ public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
   @Override
   public ImmutableList<Schema> getBranchSchemas() {
     return mBranchSchemas;
+  }
+
+  @Override
+  public boolean recursiveEquals(
+      final Object obj,
+      final ImmutableSet<String> parentRecordNames
+  ) {
+    if (obj == null || !(obj instanceof UnionSchema)) {
+      return false;
+    } else {
+      final UnionSchema that = (UnionSchema) obj;
+      final boolean typesMatch = Objects.equals(this.getType(), that.getType());
+      final boolean branchCountMatches =
+          this.getBranchSchemas().size() == that.getBranchSchemas().size();
+      int index = 0;
+      boolean allBranchesMatch = true;
+      for (Schema branchSchema : this.getBranchSchemas()) {
+        allBranchesMatch = allBranchesMatch
+            && branchSchema.recursiveEquals(that.getBranchSchemas().get(index), parentRecordNames);
+        index++;
+      }
+      return typesMatch && branchCountMatches && allBranchesMatch;
+    }
   }
 }
