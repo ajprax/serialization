@@ -68,5 +68,6 @@ public class TestRecordSchemaBuilderImpl {
         .build();
 
     Assert.assertEquals(linkedList, linkedList2);
+    linkedList.hashCode();
   }
 }

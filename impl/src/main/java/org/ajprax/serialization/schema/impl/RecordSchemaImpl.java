@@ -95,6 +95,7 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
 
   @Override
   public int hashCode() {
+    // TODO this will cause an infinite loop on recursive schemas.
     return Objects.hash(getType(), getName(), getFieldSchemas());
   }
 

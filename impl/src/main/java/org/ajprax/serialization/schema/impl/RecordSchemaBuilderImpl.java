@@ -2,7 +2,9 @@ package org.ajprax.serialization.schema.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -48,6 +50,21 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
           "May not call getFieldSchemas on a placeholder Schema until the corresponding Builder has been built."
       );
       return mFieldSchemas;
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(getClass())
+          .add("type", getType().name())
+          .add("name", getName())
+          .add("field_schemas", (mFieldSchemas != null) ? mFieldSchemas : "Schema not yet built.")
+          .toString();
+    }
+
+    @Override
+    public int hashCode() {
+      // TODO break this recursion.
+      return Objects.hash(getType(), getName(), mFieldSchemas);
     }
 
     @Override
