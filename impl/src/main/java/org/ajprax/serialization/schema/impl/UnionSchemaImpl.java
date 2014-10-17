@@ -73,14 +73,18 @@ public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
       final boolean typesMatch = Objects.equals(this.getType(), that.getType());
       final boolean branchCountMatches =
           this.getBranchSchemas().size() == that.getBranchSchemas().size();
-      int index = 0;
-      boolean allBranchesMatch = true;
-      for (Schema branchSchema : this.getBranchSchemas()) {
-        allBranchesMatch = allBranchesMatch
-            && branchSchema.recursiveEquals(that.getBranchSchemas().get(index), parentRecordNames);
-        index++;
+      if (typesMatch && branchCountMatches) {
+        int index = 0;
+        boolean allBranchesMatch = true;
+        for (Schema branchSchema : this.getBranchSchemas()) {
+          allBranchesMatch = allBranchesMatch
+              && branchSchema.recursiveEquals(that.getBranchSchemas().get(index), parentRecordNames);
+          index++;
+        }
+        return typesMatch && branchCountMatches && allBranchesMatch;
+      } else {
+        return false;
       }
-      return typesMatch && branchCountMatches && allBranchesMatch;
     }
   }
 }
