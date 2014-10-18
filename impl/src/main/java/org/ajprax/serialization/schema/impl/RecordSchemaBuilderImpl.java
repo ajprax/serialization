@@ -1,14 +1,12 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.ajprax.serialization.schema.RecordSchema;
 import org.ajprax.serialization.schema.Schema;
@@ -74,7 +72,7 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
 
   private String mName;
   private final Map<String, Schema> mFieldSchemas = Maps.newHashMap();
-  private final List<PlaceholderSchema> mPlaceholderSchemas = Lists.newArrayList();
+  private Optional<PlaceholderSchema> mPlaceholderSchema = Optional.empty();
 
   @Override
   public RecordSchemaBuilderImpl setName(
@@ -127,9 +125,12 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
         mName != null,
         "May not create a placeholder Schema with name unset."
     );
-    final PlaceholderSchema placeholder = new PlaceholderSchema(mName);
-    mPlaceholderSchemas.add(placeholder);
-    return placeholder;
+    if (mPlaceholderSchema.isPresent()) {
+      return mPlaceholderSchema.get();
+    } else {
+      mPlaceholderSchema = Optional.of(new PlaceholderSchema(mName));
+      return mPlaceholderSchema.get();
+    }
   }
 
   @Override
@@ -139,8 +140,10 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
         "RecordSchema may not be built with name unspecified."
     );
     final ImmutableMap<String, Schema> fieldSchemas = ImmutableMap.copyOf(mFieldSchemas);
-    // TODO validate that placeholder schemas do not create impossible to manifest records. Concretely, recursive fields must be inside of a variable size collection type (optional, union, set, map, array)
-    mPlaceholderSchemas.forEach((PlaceholderSchema placeholder) -> placeholder.fill(fieldSchemas));
+    // TODO validate that placeholder schemas do not create impossible to manifest records. Concretely, recursive fields must be inside of a possibly 0 size collection type (optional, union, set, map, array)
+    if (mPlaceholderSchema.isPresent()) {
+      mPlaceholderSchema.get().fill(fieldSchemas);
+    }
     return RecordSchemaImpl.create(mName, fieldSchemas);
   }
 }
