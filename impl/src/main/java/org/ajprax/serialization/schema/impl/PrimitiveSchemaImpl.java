@@ -43,17 +43,4 @@ public final class PrimitiveSchemaImpl extends AbstractSchema {
   public int hashCode() {
     return Objects.hash(getType());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof Schema)) {
-      return false;
-    } else {
-      final Schema that = (Schema) obj;
-      return Objects.equals(this.getType(), that.getType());
-    }
-  }
 }

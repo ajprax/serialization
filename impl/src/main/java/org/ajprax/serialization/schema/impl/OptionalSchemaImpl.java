@@ -53,18 +53,4 @@ public final class OptionalSchemaImpl extends AbstractSchema implements Optional
   public int hashCode() {
     return Objects.hash(getType(), getElementSchema());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof OptionalSchema)) {
-      return false;
-    } else {
-      final OptionalSchema that = (OptionalSchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && this.getElementSchema().recursiveEquals(that.getElementSchema(), parentRecordNames);
-    }
-  }
 }

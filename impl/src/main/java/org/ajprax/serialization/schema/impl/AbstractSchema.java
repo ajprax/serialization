@@ -61,11 +61,11 @@ public abstract class AbstractSchema implements Schema {
   public boolean equals(
       final Object obj
   ) {
-    return recursiveEquals(obj, ImmutableSet.of());
+    if (obj == null || !(obj instanceof Schema)) {
+      return false;
+    } else {
+      final Schema that = (Schema) obj;
+      return SchemaEquality.create().schemasEqual(this, that);
+    }
   }
-
-  public abstract boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  );
 }

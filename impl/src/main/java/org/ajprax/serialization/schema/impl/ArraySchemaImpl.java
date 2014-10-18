@@ -58,18 +58,4 @@ public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema
   public int hashCode() {
     return Objects.hash(getType(), getElementSchema());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof ArraySchema)) {
-      return false;
-    } else {
-      final ArraySchema that = (ArraySchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && this.getElementSchema().recursiveEquals(that.getElementSchema(), parentRecordNames);
-    }
-  }
 }

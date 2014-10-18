@@ -60,31 +60,4 @@ public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
   public ImmutableList<Schema> getBranchSchemas() {
     return mBranchSchemas;
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof UnionSchema)) {
-      return false;
-    } else {
-      final UnionSchema that = (UnionSchema) obj;
-      final boolean typesMatch = Objects.equals(this.getType(), that.getType());
-      final boolean branchCountMatches =
-          this.getBranchSchemas().size() == that.getBranchSchemas().size();
-      if (typesMatch && branchCountMatches) {
-        int index = 0;
-        boolean allBranchesMatch = true;
-        for (Schema branchSchema : this.getBranchSchemas()) {
-          allBranchesMatch = allBranchesMatch
-              && branchSchema.recursiveEquals(that.getBranchSchemas().get(index), parentRecordNames);
-          index++;
-        }
-        return typesMatch && branchCountMatches && allBranchesMatch;
-      } else {
-        return false;
-      }
-    }
-  }
 }

@@ -64,15 +64,7 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
     @Override
     public int hashCode() {
       // TODO break this recursion.
-      return Objects.hash(getType(), getName(), mFieldSchemas);
-    }
-
-    @Override
-    public boolean recursiveEquals(
-        final Object obj,
-        final ImmutableSet<String> parentRecordNames
-    ) {
-      return RecordSchemaImpl.recursiveEqualsImpl(this, obj, parentRecordNames);
+      return Objects.hash(getType(), getName());
     }
   }
 

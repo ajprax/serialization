@@ -40,18 +40,4 @@ public final class SetSchemaImpl extends AbstractSchema implements SetSchema {
   public Schema getElementSchema() {
     return mElementSchema;
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof SetSchema)) {
-      return false;
-    } else {
-      final SetSchema that = (SetSchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && this.getElementSchema().recursiveEquals(that.getElementSchema(), parentRecordNames);
-    }
-  }
 }

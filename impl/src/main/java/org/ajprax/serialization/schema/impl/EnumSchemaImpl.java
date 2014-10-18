@@ -54,19 +54,4 @@ public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
   public int hashCode() {
     return Objects.hash(getType(), getName(), getValues());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof EnumSchema)) {
-      return false;
-    } else {
-      final EnumSchema that = (EnumSchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && Objects.equals(this.getName(), that.getName())
-          && Objects.equals(this.getValues(), that.getValues());
-    }
-  }
 }

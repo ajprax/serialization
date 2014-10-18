@@ -53,18 +53,4 @@ public class ExtensionSchemaImpl extends AbstractSchema implements ExtensionSche
   public int hashCode() {
     return Objects.hash(getType(), getTagSchema());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof ExtensionSchema)) {
-      return false;
-    } else {
-      final ExtensionSchema that = (ExtensionSchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && this.getTagSchema().recursiveEquals(that.getTagSchema(), parentRecordNames);
-    }
-  }
 }

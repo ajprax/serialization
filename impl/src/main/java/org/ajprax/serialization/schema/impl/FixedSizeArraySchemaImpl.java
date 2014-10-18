@@ -64,19 +64,4 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
   public int hashCode() {
     return Objects.hash(getType(), getSize(), getElementSchema());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof FixedSizeArraySchema)) {
-      return false;
-    } else {
-      final FixedSizeArraySchema that = (FixedSizeArraySchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && Objects.equals(this.getSize(), that.getSize())
-          && this.getElementSchema().recursiveEquals(that.getElementSchema(), parentRecordNames);
-    }
-  }
 }

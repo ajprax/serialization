@@ -18,46 +18,6 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
     return new RecordSchemaImpl(name, fieldSchemas);
   }
 
-  static boolean recursiveEqualsImpl(
-      final RecordSchema thiz,
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof RecordSchema)) {
-      return false;
-    } else {
-      final RecordSchema that = (RecordSchema) obj;
-      final boolean typesEqual = Objects.equals(thiz.getType(), that.getType());
-      final boolean namesEqual = Objects.equals(thiz.getName(), that.getName());
-      final boolean fieldNamesEqual = Objects.equals(
-          thiz.getFieldSchemas().keySet(),
-          that.getFieldSchemas().keySet()
-      );
-      if (typesEqual && namesEqual && fieldNamesEqual) {
-        if (parentRecordNames.contains(thiz.getName())) {
-          return true;
-        } else {
-          final ImmutableSet<String> augmentedRecursiveParentNames = ImmutableSet.<String>builder()
-              .addAll(parentRecordNames)
-              .add(thiz.getName())
-              .build();
-          boolean allFieldSchemasEqual = true;
-          for (Map.Entry<String, Schema> fieldSchemaEntry : thiz.getFieldSchemas().entrySet()) {
-            final String fieldName = fieldSchemaEntry.getKey();
-            final Schema fieldSchema = fieldSchemaEntry.getValue();
-            allFieldSchemasEqual = allFieldSchemasEqual || fieldSchema.recursiveEquals(
-                that.getFieldSchemas().get(fieldName),
-                augmentedRecursiveParentNames
-            );
-          }
-          return allFieldSchemasEqual;
-        }
-      } else {
-        return false;
-      }
-    }
-  }
-
   private final String mName;
   private final ImmutableMap<String, Schema> mFieldSchemas;
 
@@ -96,14 +56,6 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
   @Override
   public int hashCode() {
     // TODO this will cause an infinite loop on recursive schemas.
-    return Objects.hash(getType(), getName(), getFieldSchemas());
-  }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> recursiveParentNames
-  ) {
-    return recursiveEqualsImpl(this, obj, recursiveParentNames);
+    return Objects.hash(getType(), getName());
   }
 }

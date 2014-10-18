@@ -64,19 +64,4 @@ public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
   public int hashCode() {
     return Objects.hash(getType(), getKeySchema(), getValueSchema());
   }
-
-  @Override
-  public boolean recursiveEquals(
-      final Object obj,
-      final ImmutableSet<String> parentRecordNames
-  ) {
-    if (obj == null || !(obj instanceof MapSchema)) {
-      return false;
-    } else {
-      final MapSchema that = (MapSchema) obj;
-      return Objects.equals(this.getType(), that.getType())
-          && this.getKeySchema().recursiveEquals(that.getKeySchema(), parentRecordNames)
-          && this.getValueSchema().recursiveEquals(that.getValueSchema(), parentRecordNames);
-    }
-  }
 }
