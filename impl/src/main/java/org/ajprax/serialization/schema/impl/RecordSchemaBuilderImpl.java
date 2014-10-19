@@ -14,65 +14,13 @@ import org.ajprax.serialization.schema.SchemaBuilder;
 
 public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilder {
 
-  public static final class PlaceholderSchema extends AbstractSchema implements RecordSchema {
-
-    private final String mName;
-    private ImmutableMap<String, Schema> mFieldSchemas;
-
-    private PlaceholderSchema(
-        final String name
-    ) {
-      mName = name;
-    }
-
-    private void fill(
-        final ImmutableMap<String, Schema> fieldSchemas
-    ) {
-      mFieldSchemas = fieldSchemas;
-    }
-
-    @Override
-    public Type getType() {
-      return Type.RECORD;
-    }
-
-    @Override
-    public String getName() {
-      return mName;
-    }
-
-    @Override
-    public ImmutableMap<String, Schema> getFieldSchemas() {
-      Preconditions.checkState(
-          mFieldSchemas != null,
-          "May not call getFieldSchemas on a placeholder Schema until the corresponding Builder has been built."
-      );
-      return mFieldSchemas;
-    }
-
-    @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(getClass())
-          .add("type", getType().name())
-          .add("name", getName())
-          .add("field_schemas", (mFieldSchemas != null) ? mFieldSchemas : "Schema not yet built.")
-          .toString();
-    }
-
-    @Override
-    public int hashCode() {
-      // TODO break this recursion.
-      return Objects.hash(getType(), getName());
-    }
-  }
-
   public static RecordSchemaBuilderImpl create() {
     return new RecordSchemaBuilderImpl();
   }
 
   private String mName;
   private final Map<String, Schema> mFieldSchemas = Maps.newHashMap();
-  private Optional<PlaceholderSchema> mPlaceholderSchema = Optional.empty();
+  private Optional<RecordSchemaImpl> mRecordSchema = Optional.empty();
 
   @Override
   public RecordSchemaBuilderImpl setName(
@@ -120,16 +68,16 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
   }
 
   @Override
-  public PlaceholderSchema getPlaceholderSchema() {
+  public RecordSchema getPlaceholderSchema() {
     Preconditions.checkState(
         mName != null,
         "May not create a placeholder Schema with name unset."
     );
-    if (mPlaceholderSchema.isPresent()) {
-      return mPlaceholderSchema.get();
+    if (mRecordSchema.isPresent()) {
+      return mRecordSchema.get();
     } else {
-      mPlaceholderSchema = Optional.of(new PlaceholderSchema(mName));
-      return mPlaceholderSchema.get();
+      mRecordSchema = Optional.of(RecordSchemaImpl.create(mName));
+      return mRecordSchema.get();
     }
   }
 
@@ -141,9 +89,11 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
     );
     final ImmutableMap<String, Schema> fieldSchemas = ImmutableMap.copyOf(mFieldSchemas);
     // TODO validate that placeholder schemas do not create impossible to manifest records. Concretely, recursive fields must be inside of a possibly 0 size collection type (optional, union, set, map, array)
-    if (mPlaceholderSchema.isPresent()) {
-      mPlaceholderSchema.get().fill(fieldSchemas);
+    if (mRecordSchema.isPresent()) {
+      mRecordSchema.get().fillFieldSchemas(fieldSchemas);
+      return mRecordSchema.get();
+    } else {
+      return RecordSchemaImpl.create(mName, ImmutableMap.copyOf(mFieldSchemas));
     }
-    return RecordSchemaImpl.create(mName, fieldSchemas);
   }
 }
