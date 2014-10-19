@@ -40,17 +40,4 @@ public class ExtensionSchemaImpl extends AbstractSchema implements ExtensionSche
         mTagSchema.getName()
     );
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("tag_schema", getTagSchema())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getTagSchema());
-  }
 }

@@ -1,6 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.ArraySchema;
 import org.ajprax.serialization.schema.EnumSchema;
 import org.ajprax.serialization.schema.ExtensionSchema;
@@ -58,6 +57,16 @@ public abstract class AbstractSchema implements Schema {
   }
 
   @Override
+  public String toString() {
+    return SchemaRecursionHelpers.toString(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return SchemaRecursionHelpers.hashCode(this);
+  }
+
+  @Override
   public boolean equals(
       final Object obj
   ) {
@@ -65,7 +74,7 @@ public abstract class AbstractSchema implements Schema {
       return false;
     } else {
       final Schema that = (Schema) obj;
-      return SchemaEquality.create().schemasEqual(this, that);
+      return SchemaRecursionHelpers.equals(this, that);
     }
   }
 }

@@ -50,18 +50,4 @@ public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
   public Schema getValueSchema() {
     return mValueSchema;
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("key_schema", getKeySchema())
-        .add("value_schema", getValueSchema())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getKeySchema(), getValueSchema());
-  }
 }

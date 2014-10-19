@@ -16,9 +16,9 @@ public class TestRecordSchemaBuilderImpl {
     final Schema linked = builder.build();
     System.out.println(linked.getName());
     System.out.println(
-        Maps.transformEntries(
+        Maps.transformValues(
             linked.asRecordSchema().getFieldSchemas(),
-            (String key, Schema value) -> value.getName()
+            (Schema value) -> value.getName()
         )
     );
 
@@ -68,6 +68,9 @@ public class TestRecordSchemaBuilderImpl {
         .build();
 
     Assert.assertEquals(linkedList, linkedList2);
-    linkedList.hashCode();
+    System.out.println(linkedList.hashCode());
+    System.out.println(linkedList2.hashCode());
+    System.out.println(linkedList.toString());
+    System.out.println(linkedList2.toString());
   }
 }

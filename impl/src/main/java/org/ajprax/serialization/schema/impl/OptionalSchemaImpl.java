@@ -40,17 +40,4 @@ public final class OptionalSchemaImpl extends AbstractSchema implements Optional
   public Schema getElementSchema() {
     return mElementSchema;
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("element_schema", getElementSchema())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getElementSchema());
-  }
 }

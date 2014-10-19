@@ -61,19 +61,4 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
     );
     return mFieldSchemas.get();
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("name", getName())
-        .add("field_schemas", mFieldSchemas.isPresent() ? mFieldSchemas : "Schema not yet built.")
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    // TODO include field schemas in hash code but avoid recursive loops.
-    return Objects.hash(getType(), getName());
-  }
 }

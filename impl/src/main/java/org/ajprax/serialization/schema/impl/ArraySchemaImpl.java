@@ -45,17 +45,4 @@ public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema
   public Schema getElementSchema() {
     return mElementSchema;
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType().name())
-        .add("element_schema", getElementSchema().toString())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getElementSchema());
-  }
 }

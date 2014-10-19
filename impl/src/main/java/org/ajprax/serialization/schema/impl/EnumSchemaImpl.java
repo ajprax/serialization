@@ -40,18 +40,4 @@ public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
   public ImmutableSet<String> getValues() {
     return mValues;
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("name", getName())
-        .add("values", getValues())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getName(), getValues());
-  }
 }

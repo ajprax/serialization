@@ -31,16 +31,4 @@ public final class PrimitiveSchemaImpl extends AbstractSchema {
   public String getName() {
     return mType.name();
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType());
-  }
 }

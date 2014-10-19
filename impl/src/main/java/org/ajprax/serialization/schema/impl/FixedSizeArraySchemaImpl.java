@@ -50,18 +50,4 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
         mElementSchema.getName()
     );
   }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(getClass())
-        .add("type", getType())
-        .add("size", getSize())
-        .add("element_schema", getElementSchema())
-        .toString();
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(getType(), getSize(), getElementSchema());
-  }
 }
