@@ -72,5 +72,21 @@ public class TestRecordSchemaBuilderImpl {
     System.out.println(linkedList2.hashCode());
     System.out.println(linkedList.toString());
     System.out.println(linkedList2.toString());
+
+    final SchemaBuilder.RecordSchemaBuilder rsb3 = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final Schema linkedList3 = rsb3
+        .setName("LinkedList3")
+        .setFieldSchema(
+            "head",
+            PrimitiveSchemaImpl.create(Schema.Type.BOOLEAN)
+        )
+        .setFieldSchema(
+            "tail",
+            rsb3.getPlaceholderSchema()
+        )
+        .build();
+    System.out.println(linkedList3.toString());
+    System.out.println(linkedList3.hashCode());
+    System.out.println(linkedList3.equals(linkedList2));
   }
 }

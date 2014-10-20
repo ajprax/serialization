@@ -1,9 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.collect.ImmutableSet;
-import org.ajprax.serialization.schema.OptionalSchema;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.SetSchema;
 
@@ -34,6 +30,11 @@ public final class SetSchemaImpl extends AbstractSchema implements SetSchema {
         "set<%s>",
         mElementSchema.getName()
     );
+  }
+
+  @Override
+  public SetSchemaImpl asSetSchema() {
+    return this;
   }
 
   @Override

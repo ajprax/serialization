@@ -1,9 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.OptionalSchema;
 import org.ajprax.serialization.schema.Schema;
 
@@ -34,6 +30,11 @@ public final class OptionalSchemaImpl extends AbstractSchema implements Optional
         "optional<%s>",
         mElementSchema.getName()
     );
+  }
+
+  @Override
+  public OptionalSchemaImpl asOptionalSchema() {
+    return this;
   }
 
   @Override

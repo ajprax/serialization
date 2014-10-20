@@ -11,11 +11,15 @@ import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.SetSchema;
 import org.ajprax.serialization.schema.UnionSchema;
 
+/**
+ * Base class for Schemas.
+ */
 public abstract class AbstractSchema implements Schema {
   @Override
   public EnumSchema asEnumSchema() {
     return (EnumSchema) this;
   }
+
   @Override
   public ExtensionSchema asExtensionSchema() {
     return (ExtensionSchema) this;

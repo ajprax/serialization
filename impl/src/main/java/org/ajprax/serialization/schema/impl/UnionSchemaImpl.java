@@ -1,9 +1,6 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.UnionSchema;

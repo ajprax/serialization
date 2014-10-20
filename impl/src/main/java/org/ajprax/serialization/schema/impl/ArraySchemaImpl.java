@@ -1,9 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.ArraySchema;
 import org.ajprax.serialization.schema.Schema;
 
@@ -37,7 +33,7 @@ public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema
   }
 
   @Override
-  public ArraySchema asArraySchema() {
+  public ArraySchemaImpl asArraySchema() {
     return this;
   }
 

@@ -10,8 +10,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.ajprax.serialization.schema.Schema;
 
+/** Helper methods for recursive Schema operations. */
 public final class SchemaRecursionHelpers {
 
+  /** Unordered pair of Schemas. Equality is tested by reference rather than value. */
   private static final class SchemaPair {
     private final Schema mLeft;
     private final Schema mRight;
@@ -388,18 +390,53 @@ public final class SchemaRecursionHelpers {
     }
   }
 
+  /**
+   * Create a String representation of a Schema.
+   *
+   * If the Schema contains a recursive reference, the recursion is broken and a token is included
+   * in its place that indicates a loop. Recursive loops are identified according to the rules
+   * defined by {@link #equals(org.ajprax.serialization.schema.Schema,
+   * org.ajprax.serialization.schema.Schema)}.
+   *
+   * @param schema Schema for which to get a String representation.
+   * @return The given Schema represented as a String.
+   */
   public static String toString(
       final Schema schema
   ) {
     return toString(schema, Maps.newHashMap());
   }
 
+  /**
+   * Hash a Schema to an integer.
+   *
+   * If the Schema contains a recursive reference, the recursion is broken and the hash value up to
+   * that point is returned. Recursive loops are identified by reference equality. This recursive
+   * check may require a deeper traversal than the one defined by
+   * {@link #equals(org.ajprax.serialization.schema.Schema, org.ajprax.serialization.schema.Schema)}
+   * but equals relies on hashCode to break recursion so that it may use a hash map internally. As a
+   * result, `hashCode` must use a more fundamental system to break recursion.
+   *
+   * @param schema Schema to hash to an integer.
+   * @return An integer reduction of the given Schema.
+   */
   public static int hashCode(
       final Schema schema
   ) {
     return hashCode(schema, Maps.newIdentityHashMap());
   }
 
+  /**
+   * Compare two Schemas for equality.
+   *
+   * Two Schemas are considered equal if neither contains a recursive reference and their type trees
+   * are equal or if both contain recursive references at the same place in their respective type
+   * graphs and the graphs are otherwise equal.
+   *
+   * @param left Left Schema to compare.
+   * @param right Right Schema to compare.
+   * @return Whether the two Schemas are equal.
+   */
   public static boolean equals(
       final Schema left,
       final Schema right

@@ -1,7 +1,10 @@
 package org.ajprax.serialization.schema;
 
-import com.google.common.collect.ImmutableSet;
-
+/**
+ * Super-interface of all Schema types.
+ *
+ * Provides specialization methods for dealing with non-primitive Schemas.
+ */
 public interface Schema {
   /** Schema types. */
   public enum Type {

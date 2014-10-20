@@ -4,8 +4,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Super-interface of all Schema builders.
+ *
+ * Provides specialization methods for building non-primitive Schemas.
+ */
 public interface SchemaBuilder {
 
+  /**
+   * @return The type of the Schema being built.
+   */
   Schema.Type getType();
 
   ArraySchemaBuilder asArraySchemaBuilder();
@@ -18,6 +26,9 @@ public interface SchemaBuilder {
   SetSchemaBuilder asSetSchemaBuilder();
   UnionSchemaBuilder asUnionSchemaBuilder();
 
+  /**
+   * @return The newly built Schema.
+   */
   Schema build();
 
   public static interface ArraySchemaBuilder {

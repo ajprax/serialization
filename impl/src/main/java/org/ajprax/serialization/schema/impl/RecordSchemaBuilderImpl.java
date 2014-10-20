@@ -1,10 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -88,7 +86,6 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
         "RecordSchema may not be built with name unspecified."
     );
     final ImmutableMap<String, Schema> fieldSchemas = ImmutableMap.copyOf(mFieldSchemas);
-    // TODO validate that placeholder schemas do not create impossible to manifest records. Concretely, recursive fields must be inside of a possibly 0 size collection type (optional, union, set, map, array)
     if (mRecordSchema.isPresent()) {
       mRecordSchema.get().fillFieldSchemas(fieldSchemas);
       return mRecordSchema.get();

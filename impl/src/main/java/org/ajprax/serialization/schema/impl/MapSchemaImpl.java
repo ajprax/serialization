@@ -1,9 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.MapSchema;
 import org.ajprax.serialization.schema.Schema;
 
@@ -39,6 +35,11 @@ public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
         mKeySchema.getName(),
         mValueSchema.getName()
     );
+  }
+
+  @Override
+  public MapSchemaImpl asMapSchema() {
+    return this;
   }
 
   @Override

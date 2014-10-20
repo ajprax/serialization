@@ -1,9 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.FixedSizeArraySchema;
 import org.ajprax.serialization.schema.Schema;
 
@@ -28,16 +24,6 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
   }
 
   @Override
-  public int getSize() {
-    return mSize;
-  }
-
-  @Override
-  public Schema getElementSchema() {
-    return mElementSchema;
-  }
-
-  @Override
   public Type getType() {
     return Type.FIXED_SIZE_ARRAY;
   }
@@ -49,5 +35,20 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
         mSize,
         mElementSchema.getName()
     );
+  }
+
+  @Override
+  public FixedSizeArraySchemaImpl asFixedSizeArraySchema() {
+    return this;
+  }
+
+  @Override
+  public int getSize() {
+    return mSize;
+  }
+
+  @Override
+  public Schema getElementSchema() {
+    return mElementSchema;
   }
 }

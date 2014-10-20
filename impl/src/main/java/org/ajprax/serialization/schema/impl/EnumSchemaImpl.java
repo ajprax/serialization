@@ -1,8 +1,5 @@
 package org.ajprax.serialization.schema.impl;
 
-import java.util.Objects;
-
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.EnumSchema;
 
@@ -27,13 +24,18 @@ public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
   }
 
   @Override
+  public Type getType() {
+    return Type.ENUM;
+  }
+
+  @Override
   public String getName() {
     return mName;
   }
 
   @Override
-  public Type getType() {
-    return Type.ENUM;
+  public EnumSchemaImpl asEnumSchema() {
+    return this;
   }
 
   @Override
