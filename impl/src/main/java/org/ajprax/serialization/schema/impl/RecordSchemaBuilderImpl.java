@@ -87,8 +87,9 @@ public class RecordSchemaBuilderImpl implements SchemaBuilder.RecordSchemaBuilde
     );
     final ImmutableMap<String, Schema> fieldSchemas = ImmutableMap.copyOf(mFieldSchemas);
     if (mRecordSchema.isPresent()) {
-      mRecordSchema.get().fillFieldSchemas(fieldSchemas);
-      return mRecordSchema.get();
+      final RecordSchemaImpl placeholder = mRecordSchema.get();
+      placeholder.fillFieldSchemas(fieldSchemas);
+      return placeholder;
     } else {
       return RecordSchemaImpl.create(mName, ImmutableMap.copyOf(mFieldSchemas));
     }

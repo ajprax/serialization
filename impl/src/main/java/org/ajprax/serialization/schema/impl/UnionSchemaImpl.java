@@ -43,7 +43,7 @@ public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
         nameFormat(mBranchSchemas.size()),
         Lists.transform(
             mBranchSchemas,
-            (Schema branchSchema) -> branchSchema.getName()
+            Schema::getName
         ).toArray()
     );
   }

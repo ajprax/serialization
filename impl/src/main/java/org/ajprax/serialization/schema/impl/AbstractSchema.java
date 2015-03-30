@@ -17,47 +17,47 @@ import org.ajprax.serialization.schema.UnionSchema;
 public abstract class AbstractSchema implements Schema {
   @Override
   public EnumSchema asEnumSchema() {
-    return (EnumSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an EnumSchema.", getName()));
   }
 
   @Override
   public ExtensionSchema asExtensionSchema() {
-    return (ExtensionSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ExtensionSchema.", getName()));
   }
 
   @Override
   public ArraySchema asArraySchema() {
-    return (ArraySchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ArraySchema.", getName()));
   }
 
   @Override
   public FixedSizeArraySchema asFixedSizeArraySchema() {
-    return (FixedSizeArraySchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a FixedSizeArraySchema.", getName()));
   }
 
   @Override
   public SetSchema asSetSchema() {
-    return (SetSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a SetSchema.", getName()));
   }
 
   @Override
   public MapSchema asMapSchema() {
-    return (MapSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a MapSchema.", getName()));
   }
 
   @Override
   public UnionSchema asUnionSchema() {
-    return (UnionSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a UnionSchema.", getName()));
   }
 
   @Override
   public OptionalSchema asOptionalSchema() {
-    return (OptionalSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an OptionalSchema.", getName()));
   }
 
   @Override
   public RecordSchema asRecordSchema() {
-    return (RecordSchema) this;
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a RecordSchema.", getName()));
   }
 
   @Override
@@ -77,8 +77,7 @@ public abstract class AbstractSchema implements Schema {
     if (obj == null || !(obj instanceof Schema)) {
       return false;
     } else {
-      final Schema that = (Schema) obj;
-      return SchemaRecursionHelpers.equals(this, that);
+      return SchemaRecursionHelpers.equals(this, (Schema) obj);
     }
   }
 }

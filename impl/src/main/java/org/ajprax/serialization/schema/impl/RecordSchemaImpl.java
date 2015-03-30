@@ -16,7 +16,16 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
     return new RecordSchemaImpl(name, Optional.of(fieldSchemas));
   }
 
-  public static RecordSchemaImpl create(
+  /**
+   * Factory method for creating a placeholder record schema which may be used when creating a
+   * recursive record.
+   *
+   * Must call {@link #fillFieldSchemas} before this schema is valid for use.
+   *
+   * @param name Name of this record.
+   * @return A new placehold record schema.
+   */
+  static RecordSchemaImpl create(
       final String name
   ) {
     return new RecordSchemaImpl(name, Optional.empty());
@@ -33,9 +42,19 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
     mFieldSchemas = fieldSchemas;
   }
 
+  /**
+   * Complete construction of this placeholder record schema. May only be called once, and may not
+   * be called if this record schema was initialized with field schemas.
+   *
+   * @param fieldSchemas Map from field name to Schema.
+   */
   void fillFieldSchemas(
       final ImmutableMap<String, Schema> fieldSchemas
   ) {
+    Preconditions.checkState(
+        !mFieldSchemas.isPresent(),
+        "May not fillFieldSchemas of a record which already includes field schemas."
+    );
     mFieldSchemas = Optional.of(fieldSchemas);
   }
 

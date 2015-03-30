@@ -43,6 +43,8 @@ public final class SchemaRecursionHelpers {
     public boolean equals(
         final Object obj
     ) {
+      // TODO: Consider removing these safety checks to improve performance.
+      // This is a private class which is never called with null values or values of other types.
       if (obj == null || !obj.getClass().equals(getClass())) {
         return false;
       } else {
@@ -66,15 +68,11 @@ public final class SchemaRecursionHelpers {
       final SchemaPair pair = new SchemaPair(left, right);
       final Optional<Boolean> knownEquals = knownPairs.get(pair);
       if (knownEquals != null) {
-        if (knownEquals.isPresent()) {
-          // TODO is it ever possible to get into a situation where we are comparing two schemas we
-          // know to be unequal with in a single schema graph comparison? Should a single false
-          // short circuit the entire process?
-          return knownEquals.get();
-        } else {
-          // Comparison is in progress, return true to break recursion.
-          return true;
-        }
+        // TODO is it ever possible to get into a situation where we are comparing two schemas we
+        // know to be unequal within a single schema graph comparison? Should a single false
+        // short circuit the entire process? In other words, can knownEquals ever contain false?
+        // if absent, recursive comparison in progress, break recursion.
+        return knownEquals.orElse(true);
       } else {
         switch(left.getType()) {
           case UNSIGNED_8:
@@ -160,7 +158,7 @@ public final class SchemaRecursionHelpers {
             return equal;
           }
           case RECORD: {
-            // record schemas are equal if their names are equal and their field schemas are equal.
+            // record schemas are equal if their names are equal and their field names and schemas are equal.
             knownPairs.put(pair, Optional.empty());
             final Map<String, Schema> leftFieldSchemas = left.asRecordSchema().getFieldSchemas();
             final Map<String, Schema> rightFieldSchemas = right.asRecordSchema().getFieldSchemas();
@@ -183,12 +181,8 @@ public final class SchemaRecursionHelpers {
   ) {
     final Optional<String> knownToString = knownSchemas.get(schema);
     if (knownToString != null) {
-      if (knownToString.isPresent()) {
-        return knownToString.get();
-      } else {
-        // toString building in progress, break recursion.
-        return String.format("Recursive record named: '%s'", schema.getName());
-      }
+      // if absent, recursive toString in progress, break recursion.
+      return knownToString.orElse(String.format("Recursive record named: '%s'", schema.getName()));
     } else {
       knownSchemas.put(schema, Optional.empty());
       switch (schema.getType()) {
@@ -312,12 +306,8 @@ public final class SchemaRecursionHelpers {
   ) {
     final Optional<Integer> knownHashCode = knownSchemas.get(schema);
     if (knownHashCode != null) {
-      if (knownHashCode.isPresent()) {
-        return knownHashCode.get();
-      } else {
-        // hashCode building in progress, break recursion.
-        return 0;
-      }
+      // if absent, recursive hashCode in progress, break recursion.
+      return knownHashCode.orElse(0);
     } else {
       knownSchemas.put(schema, Optional.empty());
       switch (schema.getType()) {
