@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.OptionalSchema;
 import org.ajprax.serialization.schema.Schema;
 
-public final class OptionalSchemaImpl extends AbstractSchema implements OptionalSchema {
+public final class OptionalSchemaImpl extends AbstractSchema {
 
   public static OptionalSchemaImpl create(
       final Schema elementSchema
@@ -30,11 +29,6 @@ public final class OptionalSchemaImpl extends AbstractSchema implements Optional
         "optional<%s>",
         mElementSchema.getName()
     );
-  }
-
-  @Override
-  public OptionalSchemaImpl asOptionalSchema() {
-    return this;
   }
 
   @Override

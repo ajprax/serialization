@@ -3,9 +3,8 @@ package org.ajprax.serialization.schema.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.ajprax.serialization.schema.Schema;
-import org.ajprax.serialization.schema.UnionSchema;
 
-public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
+public class UnionSchemaImpl extends AbstractSchema {
 
   public static UnionSchemaImpl create(
       final ImmutableList<Schema> branchSchemas
@@ -46,11 +45,6 @@ public class UnionSchemaImpl extends AbstractSchema implements UnionSchema {
             Schema::getName
         ).toArray()
     );
-  }
-
-  @Override
-  public UnionSchema asUnionSchema() {
-    return this;
   }
 
   @Override

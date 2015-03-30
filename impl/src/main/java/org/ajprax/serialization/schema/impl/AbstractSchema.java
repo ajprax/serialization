@@ -1,63 +1,53 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.ArraySchema;
-import org.ajprax.serialization.schema.EnumSchema;
-import org.ajprax.serialization.schema.ExtensionSchema;
-import org.ajprax.serialization.schema.FixedSizeArraySchema;
-import org.ajprax.serialization.schema.MapSchema;
-import org.ajprax.serialization.schema.OptionalSchema;
-import org.ajprax.serialization.schema.RecordSchema;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.ajprax.serialization.schema.Schema;
-import org.ajprax.serialization.schema.SetSchema;
-import org.ajprax.serialization.schema.UnionSchema;
 
 /**
  * Base class for Schemas.
  */
 public abstract class AbstractSchema implements Schema {
-  @Override
-  public EnumSchema asEnumSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an EnumSchema.", getName()));
+
+  // Enum only
+  public ImmutableSet<String> getEnumSymbols() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ENUM.", getName()));
   }
 
-  @Override
-  public ExtensionSchema asExtensionSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ExtensionSchema.", getName()));
+  // Extension only
+  public Schema getTagSchema() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an EXTENSION.", getName()));
   }
 
-  @Override
-  public ArraySchema asArraySchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ArraySchema.", getName()));
+  // FixedSizeArray only
+  public int getSize() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a FIXED_SIZE_ARRAY.", getName()));
   }
 
-  @Override
-  public FixedSizeArraySchema asFixedSizeArraySchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a FixedSizeArraySchema.", getName()));
+  // Map only
+  public Schema getKeySchema() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a MAP.", getName()));
   }
 
-  @Override
-  public SetSchema asSetSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a SetSchema.", getName()));
+  // Map only
+  public Schema getValueSchema() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a MAP.", getName()));
   }
 
-  @Override
-  public MapSchema asMapSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a MapSchema.", getName()));
+  // Union only
+  public ImmutableList<Schema> getBranchSchemas() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a UNION.", getName()));
   }
 
-  @Override
-  public UnionSchema asUnionSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a UnionSchema.", getName()));
+  // Record only
+  public ImmutableMap<String, Schema> getFieldSchemas() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a RECORD.", getName()));
   }
 
-  @Override
-  public OptionalSchema asOptionalSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an OptionalSchema.", getName()));
-  }
-
-  @Override
-  public RecordSchema asRecordSchema() {
-    throw new UnsupportedOperationException(String.format("Schema: '%s' is not a RecordSchema.", getName()));
+  // Array, FixedSizeArray, Set, Optional
+  public Schema getElementSchema() {
+    throw new UnsupportedOperationException(String.format("Schema: '%s' is not an ARRAY, FIXED_SIZE_ARRAY, SET, or OPTIONAL.", getName()));
   }
 
   @Override

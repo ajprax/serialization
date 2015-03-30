@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
 import com.google.common.collect.ImmutableSet;
-import org.ajprax.serialization.schema.EnumSchema;
 
-public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
+public final class EnumSchemaImpl extends AbstractSchema {
 
   public static EnumSchemaImpl create(
       final String name,
@@ -13,14 +12,14 @@ public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
   }
 
   private final String mName;
-  private final ImmutableSet<String> mValues;
+  private final ImmutableSet<String> mEnumSymbols;
 
   private EnumSchemaImpl(
       final String name,
-      final ImmutableSet<String> values
+      final ImmutableSet<String> enumSymbols
   ) {
     mName = name;
-    mValues = values;
+    mEnumSymbols = enumSymbols;
   }
 
   @Override
@@ -34,12 +33,7 @@ public final class EnumSchemaImpl extends AbstractSchema implements EnumSchema {
   }
 
   @Override
-  public EnumSchemaImpl asEnumSchema() {
-    return this;
-  }
-
-  @Override
-  public ImmutableSet<String> getValues() {
-    return mValues;
+  public ImmutableSet<String> getEnumSymbols() {
+    return mEnumSymbols;
   }
 }

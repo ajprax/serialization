@@ -4,10 +4,9 @@ import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.ajprax.serialization.schema.RecordSchema;
 import org.ajprax.serialization.schema.Schema;
 
-public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
+public class RecordSchemaImpl extends AbstractSchema {
 
   public static RecordSchemaImpl create(
       final String name,
@@ -66,11 +65,6 @@ public class RecordSchemaImpl extends AbstractSchema implements RecordSchema {
   @Override
   public String getName() {
     return mName;
-  }
-
-  @Override
-  public RecordSchemaImpl asRecordSchema() {
-    return this;
   }
 
   @Override

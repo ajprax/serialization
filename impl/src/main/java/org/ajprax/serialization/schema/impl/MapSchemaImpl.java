@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.MapSchema;
 import org.ajprax.serialization.schema.Schema;
 
-public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
+public final class MapSchemaImpl extends AbstractSchema {
 
   public static MapSchemaImpl create(
       final Schema keySchema,
@@ -35,11 +34,6 @@ public final class MapSchemaImpl extends AbstractSchema implements MapSchema {
         mKeySchema.getName(),
         mValueSchema.getName()
     );
-  }
-
-  @Override
-  public MapSchemaImpl asMapSchema() {
-    return this;
   }
 
   @Override

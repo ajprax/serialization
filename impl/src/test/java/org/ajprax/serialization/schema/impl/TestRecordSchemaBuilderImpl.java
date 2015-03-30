@@ -9,59 +9,67 @@ import org.junit.Test;
 public class TestRecordSchemaBuilderImpl {
   @Test
   public void testRecursiveRecord() {
-    final SchemaBuilder.RecordSchemaBuilder builder = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
-    builder.setName("LinkedBooleanList");
-    builder.setFieldSchema("head", PrimitiveSchemaImpl.create(Schema.Type.BOOLEAN));
-    builder.setFieldSchema("tail", SchemaBuilderImpl.create(Schema.Type.OPTIONAL).asOptionalSchemaBuilder().setElementSchema(builder.getPlaceholderSchema()).build());
-    final Schema linked = builder.build();
+    final SchemaBuilder builder = SchemaBuilderImpl.create(Schema.Type.RECORD);
+    final Schema linked = builder
+        .setName("LinkedBooleanList")
+        .setFieldSchema(
+            "head",
+            SchemaBuilderImpl.create(Schema.Type.BOOLEAN).build()
+        )
+        .setFieldSchema(
+            "tail",
+            SchemaBuilderImpl.create(Schema.Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build()
+        )
+        .build();
+
     System.out.println(linked.getName());
     System.out.println(
         Maps.transformValues(
-            linked.asRecordSchema().getFieldSchemas(),
-            (Schema value) -> value.getName()
+            linked.getFieldSchemas(),
+            Schema::getName
         )
     );
 
     Assert.assertEquals(
         linked.getName(),
-        linked.asRecordSchema().getFieldSchemas().get("tail").asOptionalSchema().getElementSchema().getName()
+        linked.getFieldSchemas().get("tail").getElementSchema().getName()
     );
 
-    final SchemaBuilder.RecordSchemaBuilder rsb = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final SchemaBuilder rsb = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList = rsb
         .setName("LinkedList")
         .setFieldSchema(
             "head",
             SchemaBuilderImpl
                 .create(Schema.Type.EXTENSION)
-                .asExtensionSchemaBuilder()
+
                 .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
                 .build()
         )
         .setFieldSchema(
             "tail",
             SchemaBuilderImpl.create(Schema.Type.OPTIONAL)
-                .asOptionalSchemaBuilder()
+
                 .setElementSchema(rsb.getPlaceholderSchema())
                 .build()
         )
         .build();
 
-    final SchemaBuilder.RecordSchemaBuilder rsb2 = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final SchemaBuilder rsb2 = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList2 = rsb2
         .setName("LinkedList")
         .setFieldSchema(
             "head",
             SchemaBuilderImpl
                 .create(Schema.Type.EXTENSION)
-                .asExtensionSchemaBuilder()
+
                 .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
                 .build()
         )
         .setFieldSchema(
             "tail",
             SchemaBuilderImpl.create(Schema.Type.OPTIONAL)
-                .asOptionalSchemaBuilder()
+
                 .setElementSchema(rsb2.getPlaceholderSchema())
                 .build()
         )
@@ -73,7 +81,7 @@ public class TestRecordSchemaBuilderImpl {
     System.out.println(linkedList.toString());
     System.out.println(linkedList2.toString());
 
-    final SchemaBuilder.RecordSchemaBuilder rsb3 = SchemaBuilderImpl.create(Schema.Type.RECORD).asRecordSchemaBuilder();
+    final SchemaBuilder rsb3 = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList3 = rsb3
         .setName("LinkedList3")
         .setFieldSchema(

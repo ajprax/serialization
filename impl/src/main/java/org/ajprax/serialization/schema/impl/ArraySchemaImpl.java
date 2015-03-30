@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.ArraySchema;
 import org.ajprax.serialization.schema.Schema;
 
-public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema {
+public final class ArraySchemaImpl extends AbstractSchema {
 
   public static ArraySchemaImpl create(
       final Schema elementSchema
@@ -30,11 +29,6 @@ public final class ArraySchemaImpl extends AbstractSchema implements ArraySchema
         "array<%s>",
         mElementSchema.getName()
     );
-  }
-
-  @Override
-  public ArraySchemaImpl asArraySchema() {
-    return this;
   }
 
   @Override

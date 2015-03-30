@@ -1,5 +1,9 @@
 package org.ajprax.serialization.schema;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Super-interface of all Schema types.
  *
@@ -44,48 +48,27 @@ public interface Schema {
    */
   String getName();
 
-  /**
-   * @return This Schema as an EnumSchema if its Type is {@link Type#ENUM}.
-   */
-  EnumSchema asEnumSchema();
+  // Enum only
+  ImmutableSet<String> getEnumSymbols();
 
-  /**
-   * @return This Schema as an ExtensionSchema if its Type is {@link Type#EXTENSION}.
-   */
-  ExtensionSchema asExtensionSchema();
+  // Extension only
+  Schema getTagSchema();
 
-  /**
-   * @return This Schema as an ArraySchema if its Type is {@link Type#ARRAY}.
-   */
-  ArraySchema asArraySchema();
+  // FixedSizeArray only
+  int getSize();
 
-  /**
-   * @return This Schema as a FixedSizeArraySchema if its Type is {@link Type#FIXED_SIZE_ARRAY}.
-   */
-  FixedSizeArraySchema asFixedSizeArraySchema();
+  // Map only
+  Schema getKeySchema();
 
-  /**
-   * @return This Schema as a SetSchema if its Type is {@link Type#SET}.
-   */
-  SetSchema asSetSchema();
+  // Map only
+  Schema getValueSchema();
 
-  /**
-   * @return This Schema as a MapSchema if its type is {@link Type#MAP}.
-   */
-  MapSchema asMapSchema();
+  // Union only
+  ImmutableList<Schema> getBranchSchemas();
 
-  /**
-   * @return This Schema as a UnionSchema if its type is {@link Type#UNION}.
-   */
-  UnionSchema asUnionSchema();
+  // Record only
+  ImmutableMap<String, Schema> getFieldSchemas();
 
-  /**
-   * @return This Schema as an OptionalSchema if its type is {@link Type#OPTIONAL}.
-   */
-  OptionalSchema asOptionalSchema();
-
-  /**
-   * @return This Schema as a RecordSchema if its type is {@link Type#RECORD}.
-   */
-  RecordSchema asRecordSchema();
+  // Array, FixedSizeArray, Set, Optional
+  Schema getElementSchema();
 }

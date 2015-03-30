@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.FixedSizeArraySchema;
 import org.ajprax.serialization.schema.Schema;
 
-public final class FixedSizeArraySchemaImpl extends AbstractSchema implements FixedSizeArraySchema {
+public final class FixedSizeArraySchemaImpl extends AbstractSchema {
 
   public static FixedSizeArraySchemaImpl create(
       final int size,
@@ -35,11 +34,6 @@ public final class FixedSizeArraySchemaImpl extends AbstractSchema implements Fi
         mSize,
         mElementSchema.getName()
     );
-  }
-
-  @Override
-  public FixedSizeArraySchemaImpl asFixedSizeArraySchema() {
-    return this;
   }
 
   @Override

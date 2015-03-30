@@ -1,9 +1,8 @@
 package org.ajprax.serialization.schema.impl;
 
-import org.ajprax.serialization.schema.ExtensionSchema;
 import org.ajprax.serialization.schema.Schema;
 
-public class ExtensionSchemaImpl extends AbstractSchema implements ExtensionSchema {
+public class ExtensionSchemaImpl extends AbstractSchema {
 
   public static ExtensionSchemaImpl create(
       final Schema tagSchema
@@ -30,11 +29,6 @@ public class ExtensionSchemaImpl extends AbstractSchema implements ExtensionSche
         "extension<%s>",
         mTagSchema.getName()
     );
-  }
-
-  @Override
-  public ExtensionSchemaImpl asExtensionSchema() {
-    return this;
   }
 
   @Override
