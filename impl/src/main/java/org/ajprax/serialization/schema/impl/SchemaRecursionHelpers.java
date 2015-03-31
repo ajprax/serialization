@@ -62,7 +62,9 @@ public final class SchemaRecursionHelpers {
       final Schema right,
       final Map<SchemaPair, Optional<Boolean>> knownPairs
   ) {
-    if (!Objects.equals(left.getType(), right.getType())) {
+    if (left == right) {
+      return true;
+    } else if (left == null || right == null || !Objects.equals(left.getType(), right.getType())) {
       return false;
     } else {
       final SchemaPair pair = new SchemaPair(left, right);
