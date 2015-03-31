@@ -2,7 +2,6 @@ package org.ajprax.serialization.generic.impl;
 
 import com.google.common.collect.ImmutableMap;
 import org.ajprax.serialization.generic.GenericExtension;
-import org.ajprax.serialization.generic.GenericRecord;
 import org.ajprax.serialization.generic.GenericUnion;
 import org.ajprax.serialization.generic.GenericValue;
 import org.ajprax.serialization.schema.Schema;
@@ -87,37 +86,21 @@ public class TestGenerics {
 
   @Test
   public void testRecord() {
-    final GenericRecord r = new GenericRecord() {
-      private final Schema schema = SchemaBuilderImpl.create(Type.RECORD)
-          .setName("Fullname")
-          .setFieldSchema("first", PrimitiveSchemaImpl.create(Type.STRING))
-          .setFieldSchema("last", PrimitiveSchemaImpl.create(Type.STRING))
-          .build();
+    final Schema schema = SchemaBuilderImpl.create(Type.RECORD)
+        .setName("Fullname")
+        .setFieldSchema("first", PrimitiveSchemaImpl.create(Type.STRING))
+        .setFieldSchema("last", PrimitiveSchemaImpl.create(Type.STRING))
+        .build();
+    final ImmutableMap<String, Object> value = ImmutableMap.of(
+        "first", "aaron",
+        "last", "feldstein"
+    );
 
-      private final ImmutableMap<String, Object> value = ImmutableMap.of(
-          "first", "aaron",
-          "last", "feldstein"
-      );
-
-      @SuppressWarnings("unchecked")
-      public <T> T get(final String fieldName) {
-        return (T) value.get(fieldName);
-      }
-
-      @Override
-      public Schema getSchema() {
-        return schema;
-      }
-
-      @Override
-      public ImmutableMap<String, Object> getValue() {
-        return value;
-      }
-    };
-
-    System.out.println(r.getSchema());
-    System.out.println(r.getFieldSchema("first"));
-    System.out.println(r.getValue());
-    System.out.println(r.<String>get("first"));
+    final GenericRecordImpl ri = GenericRecordImpl.create(schema, value);
+    System.out.println(ri.getSchema());
+    System.out.println(ri.getFieldSchema("first"));
+    System.out.println(ri.getValue());
+    System.out.println(ri.<String>get("first"));
+    System.out.println(ri);
   }
 }
