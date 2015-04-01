@@ -1,5 +1,5 @@
 package org.ajprax.serialization.io;
 
-public interface Encoder<I> {
-  byte[] encode(I input);
+public interface Encoder<I, O> {
+  O encode(I input);
 }
