@@ -17,14 +17,6 @@ import org.ajprax.serialization.generic.impl.GenericUnionImpl;
 import org.ajprax.serialization.io.JsonEncoder;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.Schema.Type;
-import org.ajprax.serialization.schema.SchemaBuilder;
-import org.ajprax.serialization.schema.impl.ArraySchemaImpl;
-import org.ajprax.serialization.schema.impl.EnumSchemaImpl;
-import org.ajprax.serialization.schema.impl.ExtensionSchemaImpl;
-import org.ajprax.serialization.schema.impl.FixedSizeArraySchemaImpl;
-import org.ajprax.serialization.schema.impl.OptionalSchemaImpl;
-import org.ajprax.serialization.schema.impl.PrimitiveSchemaImpl;
-import org.ajprax.serialization.schema.impl.SchemaBuilderImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +53,7 @@ public class TestJsonEncoders {
 
   @Test
   public void testFixedSizeArrays() {
-    final Schema fixedSizeSchema = FixedSizeArraySchemaImpl.create(2, PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema fixedSizeSchema = Schema.builder(Type.FIXED_SIZE_ARRAY).setSize(2).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonEncoder<List<String>> encoder = JsonEncoder.forSchema(fixedSizeSchema);
 
     {
@@ -82,7 +74,7 @@ public class TestJsonEncoders {
 
   @Test
   public void testTypeMismatch() {
-    final Schema arraySchema = ArraySchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema arraySchema = Schema.builder(Type.ARRAY).setElementSchema(Schema.primitive(Type.STRING)).build();
     final List<Integer> list = Lists.newArrayList(1, 2);
     final JsonEncoder<List<Integer>> encoder = JsonEncoder.forSchema(arraySchema);
     try {
@@ -103,7 +95,7 @@ public class TestJsonEncoders {
   @Test
   public void testEnum() {
     final ImmutableSet<String> values = ImmutableSet.copyOf(ImmutableSet.copyOf(Weekdays.values()).stream().map(Enum::name).collect(Collectors.toSet()));
-    final Schema schema = EnumSchemaImpl.create(Weekdays.class.getName(), values);
+    final Schema schema = Schema.builder(Type.ENUM).setName(Weekdays.class.getName()).setEnumSymbols(values).build();
     final JsonEncoder<Weekdays> encoder = JsonEncoder.forSchema(schema);
     final String expected = String.format("{\"name\":\"%s\",\"value\":\"MONDAY\"}", Weekdays.class.getName());
     final String actual = encoder.encode(Weekdays.MONDAY).toString();
@@ -112,14 +104,14 @@ public class TestJsonEncoders {
 
   @Test
   public void testRecord() {
-    final Schema schema = SchemaBuilderImpl.create(Type.RECORD)
+    final Schema schema = Schema.builder(Type.RECORD)
         .setName("outer")
-        .setFieldSchema("a", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("b", PrimitiveSchemaImpl.create(Type.BOOLEAN))
-        .setFieldSchema("c", SchemaBuilderImpl.create(Type.RECORD)
+        .setFieldSchema("a", Schema.primitive(Type.STRING))
+        .setFieldSchema("b", Schema.primitive(Type.BOOLEAN))
+        .setFieldSchema("c", Schema.builder(Type.RECORD)
                 .setName("inner")
-                .setFieldSchema("c1", PrimitiveSchemaImpl.create(Type.SIGNED_16))
-                .setFieldSchema("c2", PrimitiveSchemaImpl.create(Type.FLOAT_32))
+                .setFieldSchema("c1", Schema.primitive(Type.SIGNED_16))
+                .setFieldSchema("c2", Schema.primitive(Type.FLOAT_32))
                 .build()
         )
         .build();
@@ -142,10 +134,10 @@ public class TestJsonEncoders {
 
   @Test
   public void testRecursiveRecord() {
-    final SchemaBuilder builder = SchemaBuilderImpl.create(Type.RECORD).setName("LinkedList");
+    final Schema.Builder builder = Schema.builder(Type.RECORD).setName("LinkedList");
     final Schema schema = builder
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
         .build();
     final JsonEncoder<GenericRecord> encoder = JsonEncoder.forSchema(schema);
 
@@ -171,19 +163,19 @@ public class TestJsonEncoders {
 
   @Test
   public void testMutuallyRecursive() {
-    final SchemaBuilder builder1 = SchemaBuilderImpl.create(Type.RECORD).setName("One");
-    final SchemaBuilder builder2 = SchemaBuilderImpl.create(Type.RECORD).setName("Two");
+    final Schema.Builder builder1 = Schema.builder(Type.RECORD).setName("One");
+    final Schema.Builder builder2 = Schema.builder(Type.RECORD).setName("Two");
     // TODO this slightly awkward construction is a result of the fact that we have to call
     // getPlaceholderSchema on both builders before calling build on either or they will not both be
     // properly filled. A better solution to this would be desirable, or at least calling
     // getPlaceholderSchema after build should throw an error (which would mean each builder is one
     // use).
     builder1
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder2.getPlaceholderSchema()));
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder2.getPlaceholderSchema()).build());
     builder2
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.BOOLEAN))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder1.getPlaceholderSchema()));
+        .setFieldSchema("head", Schema.primitive(Type.BOOLEAN))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder1.getPlaceholderSchema()).build());
     final Schema schema1 = builder1.build();
     final Schema schema2 = builder2.build();
 
@@ -229,11 +221,11 @@ public class TestJsonEncoders {
 
   @Test
   public void testRecursiveTwice() {
-    final SchemaBuilder builder = SchemaBuilderImpl.create(Type.RECORD).setName("Twice");
+    final Schema.Builder builder = Schema.builder(Type.RECORD).setName("Twice");
     final Schema schema = builder
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail_one", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
-        .setFieldSchema("tail_two", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail_one", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
+        .setFieldSchema("tail_two", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
         .build();
     final JsonEncoder<GenericRecord> encoder = JsonEncoder.forSchema(schema);
     final GenericRecord record = GenericRecordImpl.create(
@@ -269,9 +261,9 @@ public class TestJsonEncoders {
 
   @Test
   public void testUnion() {
-    final Schema schema = SchemaBuilderImpl.create(Type.UNION)
-        .addBranchSchema(PrimitiveSchemaImpl.create(Type.STRING))
-        .addBranchSchema(PrimitiveSchemaImpl.create(Type.BOOLEAN))
+    final Schema schema = Schema.builder(Type.UNION)
+        .addBranchSchema(Schema.primitive(Type.STRING))
+        .addBranchSchema(Schema.primitive(Type.BOOLEAN))
         .build();
     final JsonEncoder<GenericUnion> encoder = JsonEncoder.forSchema(schema);
 
@@ -291,7 +283,7 @@ public class TestJsonEncoders {
 
   @Test
   public void testOptional() {
-    final Schema schema = OptionalSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.OPTIONAL).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonEncoder<Optional<String>> encoder = JsonEncoder.forSchema(schema);
     {
       final Optional<String> present = Optional.of("a_value");
@@ -309,7 +301,7 @@ public class TestJsonEncoders {
 
   @Test
   public void testExtension() {
-    final Schema schema = ExtensionSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.EXTENSION).setTagSchema(Schema.primitive(Type.STRING)).build();
     final JsonEncoder<GenericExtension<String>> encoder = JsonEncoder.forSchema(schema);
     final GenericExtension<String> extension = GenericExtensionImpl.create(schema, "tag", new byte[]{1, 2, 3});
     final String expected = "{\"tag\":\"tag\",\"value\":\"AQID\"}";

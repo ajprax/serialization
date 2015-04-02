@@ -1,10 +1,9 @@
 package org.ajprax.serialization.schema;
 
-import java.util.ServiceLoader;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.ajprax.serialization.schema.impl.SchemaBuilderFactory;
 
 /**
  * Super-interface of all Schema types.
@@ -12,10 +11,48 @@ import com.google.common.collect.ImmutableSet;
  * Provides specialization methods for dealing with non-primitive Schemas.
  */
 public interface Schema {
-  static SchemaBuilder.Provider PROVIDER = ServiceLoader.load(SchemaBuilder.Provider.class).iterator().next();
+  interface Builder {
+    Type getType();
 
-  static SchemaBuilder builder(Type type) {
-    return PROVIDER.builder(type);
+    // Array, FixedSizeArray, Set, Optional
+    Builder setElementSchema(Schema elementSchema);
+    Schema getElementSchema();
+
+    // FixedSizeArray
+    Builder setSize(Integer size);
+    Integer getSize();
+
+    // Enum
+    Builder setName(String name);
+    Builder setEnumSymbols(ImmutableSet<String> values);
+    String getName();
+    ImmutableSet<String> getEnumSymbols();
+
+    // Extension
+    Builder setTagSchema(Schema tagSchema);
+    Schema getTagSchema();
+
+    // Map
+    Builder setKeySchema(Schema keySchema);
+    Builder setValueSchema(Schema valueSchema);
+    Schema getKeySchema();
+    Schema getValueSchema();
+
+    // Record
+    Builder setFieldSchema(String fieldName, Schema fieldSchema);
+    Schema getFieldSchema(String fieldName);
+    ImmutableMap<String, Schema> getFieldSchemas();
+    Schema getPlaceholderSchema();
+
+    // Union
+    Builder addBranchSchema(Schema branchSchema);
+    ImmutableList<Schema> getBranchSchemas();
+
+    Schema build();
+  }
+
+  static Builder builder(Type type) {
+    return SchemaBuilderFactory.INSTANCE.builder(type);
   }
 
   static Schema primitive(Type type) {

@@ -34,7 +34,7 @@ public class JsonDecoders {
   // TODO many of these decoders will return values instead of type errors
   // (e.g. TextNode("hi").longValue() == 0)
 
-  public static final class JsonDecoderImplProvider implements JsonDecoder.Provider {
+  public static final class JsonDecoderImplFactory implements JsonDecoderFactory {
 
     @Override
     public <T> JsonDecoder<T> forSchema(final Schema schema) {

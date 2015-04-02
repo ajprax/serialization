@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ShortNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -33,16 +32,6 @@ import org.ajprax.serialization.generic.impl.GenericRecordImpl;
 import org.ajprax.serialization.io.JsonDecoder;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.Schema.Type;
-import org.ajprax.serialization.schema.SchemaBuilder;
-import org.ajprax.serialization.schema.impl.ArraySchemaImpl;
-import org.ajprax.serialization.schema.impl.ExtensionSchemaImpl;
-import org.ajprax.serialization.schema.impl.FixedSizeArraySchemaImpl;
-import org.ajprax.serialization.schema.impl.MapSchemaImpl;
-import org.ajprax.serialization.schema.impl.OptionalSchemaImpl;
-import org.ajprax.serialization.schema.impl.PrimitiveSchemaImpl;
-import org.ajprax.serialization.schema.impl.SchemaBuilderImpl;
-import org.ajprax.serialization.schema.impl.SetSchemaImpl;
-import org.ajprax.serialization.schema.impl.UnionSchemaImpl;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,7 +41,7 @@ public class TestJsonDecoders {
       final Schema.Type type
   ) {
     try {
-      JsonDecoder.forSchema(PrimitiveSchemaImpl.create(type));
+      JsonDecoder.forSchema(Schema.primitive(type));
     } catch (UnsupportedOperationException uoe) {
       Assert.assertEquals(
           String.format("Schema type: '%s' is unsupported in Java.", type.name()),
@@ -66,7 +55,7 @@ public class TestJsonDecoders {
       final JsonNode input,
       final T expected
   ) {
-    final JsonDecoder<T> decoder = JsonDecoder.forSchema(PrimitiveSchemaImpl.create(type));
+    final JsonDecoder<T> decoder = JsonDecoder.forSchema(Schema.primitive(type));
     final T actual = decoder.decode(input);
     Assert.assertEquals(expected, actual);
   }
@@ -93,7 +82,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testExtension() {
-    final Schema schema = ExtensionSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.EXTENSION).setTagSchema(Schema.primitive(Type.STRING)).build();
     final JsonDecoder<GenericExtension<String>> decoder = JsonDecoder.forSchema(schema);
     final ObjectNode input = JsonUtils.MAPPER.createObjectNode();
     input.put("tag", "tag");
@@ -105,7 +94,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testArray() {
-    final Schema schema = ArraySchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.ARRAY).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonDecoder<List<String>> decoder = JsonDecoder.forSchema(schema);
     final ArrayNode input = JsonUtils.MAPPER.createArrayNode().add("a").add("b").add("c");
     final List<String> expected = Lists.newArrayList("a", "b", "c");
@@ -115,7 +104,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testFixedSizeArray() {
-    final Schema schema = FixedSizeArraySchemaImpl.create(3, PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.FIXED_SIZE_ARRAY).setSize(3).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonDecoder<List<String>> decoder = JsonDecoder.forSchema(schema);
 
     {
@@ -137,7 +126,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testSet() {
-    final Schema schema = SetSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.SET).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonDecoder<Set<String>> decoder = JsonDecoder.forSchema(schema);
     {
       final ArrayNode input = JsonUtils.MAPPER.createArrayNode().add("a").add("b");
@@ -165,7 +154,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testMap() {
-    final Schema schema = MapSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING), PrimitiveSchemaImpl.create(Type.BOOLEAN));
+    final Schema schema = Schema.builder(Type.MAP).setKeySchema(Schema.primitive(Type.STRING)).setValueSchema(Schema.primitive(Type.BOOLEAN)).build();
     final JsonDecoder<Map<String, Boolean>> decoder = JsonDecoder.forSchema(schema);
     {
       final ArrayNode input = JsonUtils.MAPPER.createArrayNode().add(kv("a", true)).add(kv("b", false));
@@ -183,7 +172,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testUnion() {
-    final Schema schema = UnionSchemaImpl.create(ImmutableList.of(PrimitiveSchemaImpl.create(Type.STRING), PrimitiveSchemaImpl.create(Type.BOOLEAN)));
+    final Schema schema = Schema.builder(Type.UNION).addBranchSchema(Schema.primitive(Type.STRING)).addBranchSchema(Schema.primitive(Type.BOOLEAN)).build();
     final JsonDecoder<GenericUnion> decoder = JsonDecoder.forSchema(schema);
     {
       final ObjectNode input = JsonUtils.MAPPER.createObjectNode();
@@ -208,7 +197,7 @@ public class TestJsonDecoders {
 
   @Test
   public void testOptional() {
-    final Schema schema = OptionalSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
+    final Schema schema = Schema.builder(Type.OPTIONAL).setElementSchema(Schema.primitive(Type.STRING)).build();
     final JsonDecoder<Optional<String>> decoder = JsonDecoder.forSchema(schema);
     {
       final JsonNode input = new TextNode("abc");
@@ -226,14 +215,14 @@ public class TestJsonDecoders {
 
   @Test
   public void testRecord() throws IOException {
-    final Schema schema = SchemaBuilderImpl.create(Type.RECORD)
+    final Schema schema = Schema.builder(Type.RECORD)
         .setName("outer")
-        .setFieldSchema("a", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("b", PrimitiveSchemaImpl.create(Type.BOOLEAN))
-        .setFieldSchema("c", SchemaBuilderImpl.create(Type.RECORD)
+        .setFieldSchema("a", Schema.primitive(Type.STRING))
+        .setFieldSchema("b", Schema.primitive(Type.BOOLEAN))
+        .setFieldSchema("c", Schema.builder(Type.RECORD)
                 .setName("inner")
-                .setFieldSchema("c1", PrimitiveSchemaImpl.create(Type.SIGNED_16))
-                .setFieldSchema("c2", PrimitiveSchemaImpl.create(Type.FLOAT_32))
+                .setFieldSchema("c1", Schema.primitive(Type.SIGNED_16))
+                .setFieldSchema("c2", Schema.primitive(Type.FLOAT_32))
                 .build()
         )
         .build();
@@ -256,10 +245,10 @@ public class TestJsonDecoders {
 
   @Test
   public void testRecursiveRecord() throws IOException {
-    final SchemaBuilder builder = SchemaBuilderImpl.create(Type.RECORD).setName("LinkedList");
+    final Schema.Builder builder = Schema.builder(Type.RECORD).setName("LinkedList");
     final Schema schema = builder
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
         .build();
     final JsonDecoder<GenericRecord> decoder = JsonDecoder.forSchema(schema);
     final JsonNode input = JsonUtils.MAPPER.readTree("{\"head\":\"a\",\"tail\":{\"head\":\"b\",\"tail\":null}}");
@@ -284,19 +273,19 @@ public class TestJsonDecoders {
 
   @Test
   public void testMutuallyRecursiveRecords() throws IOException {
-    final SchemaBuilder builder1 = SchemaBuilderImpl.create(Type.RECORD).setName("One");
-    final SchemaBuilder builder2 = SchemaBuilderImpl.create(Type.RECORD).setName("Two");
+    final Schema.Builder builder1 = Schema.builder(Type.RECORD).setName("One");
+    final Schema.Builder builder2 = Schema.builder(Type.RECORD).setName("Two");
     // TODO this slightly awkward construction is a result of the fact that we have to call
     // getPlaceholderSchema on both builders before calling build on either or they will not both be
     // properly filled. A better solution to this would be desirable, or at least calling
     // getPlaceholderSchema after build should throw an error (which would mean each builder is one
     // use).
     builder1
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder2.getPlaceholderSchema()));
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder2.getPlaceholderSchema()).build());
     builder2
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.BOOLEAN))
-        .setFieldSchema("tail", OptionalSchemaImpl.create(builder1.getPlaceholderSchema()));
+        .setFieldSchema("head", Schema.primitive(Type.BOOLEAN))
+        .setFieldSchema("tail", Schema.builder(Type.OPTIONAL).setElementSchema(builder1.getPlaceholderSchema()).build());
     final Schema schema1 = builder1.build();
     final Schema schema2 = builder2.build();
 
@@ -341,11 +330,11 @@ public class TestJsonDecoders {
 
   @Test
   public void testRecursiveTwice() throws IOException {
-    final SchemaBuilder builder = SchemaBuilderImpl.create(Type.RECORD).setName("Twice");
+    final Schema.Builder builder = Schema.builder(Type.RECORD).setName("Twice");
     final Schema schema = builder
-        .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
-        .setFieldSchema("tail_one", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
-        .setFieldSchema("tail_two", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
+        .setFieldSchema("head", Schema.primitive(Type.STRING))
+        .setFieldSchema("tail_one", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
+        .setFieldSchema("tail_two", Schema.builder(Type.OPTIONAL).setElementSchema(builder.getPlaceholderSchema()).build())
         .build();
     final JsonDecoder<GenericRecord> decoder = JsonDecoder.forSchema(schema);
     final JsonNode input = JsonUtils.MAPPER.readTree("{\"head\":\"a\",\"tail_one\":{\"head\":\"b_one\",\"tail_one\":null,\"tail_two\":null},\"tail_two\":{\"head\":\"b_two\",\"tail_one\":null,\"tail_two\":null}}");

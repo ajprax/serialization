@@ -13,14 +13,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.ajprax.serialization.schema.Schema;
 import org.ajprax.serialization.schema.Schema.Type;
-import org.ajprax.serialization.schema.SchemaBuilder;
 
-public final class SchemaBuilderImpl implements SchemaBuilder {
+public final class SchemaBuilderImpl implements Schema.Builder {
 
-  public static final class SchemaBuilderImplProvider implements SchemaBuilder.Provider {
+  public static final class SchemaBuilderImplFactory implements SchemaBuilderFactory {
 
     @Override
-    public SchemaBuilder builder(final Type type) {
+    public Schema.Builder builder(final Type type) {
       return SchemaBuilderImpl.create(type);
     }
   }
@@ -85,7 +84,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setElementSchema(final Schema elementSchema) {
+  public Schema.Builder setElementSchema(final Schema elementSchema) {
     Preconditions.checkState(
         ELEMENT_SCHEMA_TYPES.contains(mType),
         "setElementSchema is only valid for Schema types in: '%s'.",
@@ -111,7 +110,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setSize(final Integer size) {
+  public Schema.Builder setSize(final Integer size) {
     Preconditions.checkState(
         Schema.Type.FIXED_SIZE_ARRAY == mType,
         "setSize is only valid for FIXED_SIZE_ARRAY Schemas."
@@ -135,7 +134,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setName(final String name) {
+  public Schema.Builder setName(final String name) {
     Preconditions.checkState(
         NAMED_SCHEMA_TYPES.contains(mType),
         "setName is only valid for Schema types in: '%s'.",
@@ -162,7 +161,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setEnumSymbols(final ImmutableSet<String> symbols) {
+  public Schema.Builder setEnumSymbols(final ImmutableSet<String> symbols) {
     Preconditions.checkState(
         Schema.Type.ENUM == mType,
         "setEnumSymbols is only valid for ENUM Schemas."
@@ -186,7 +185,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setTagSchema(final Schema tagSchema) {
+  public Schema.Builder setTagSchema(final Schema tagSchema) {
     Preconditions.checkState(
         Schema.Type.EXTENSION == mType,
         "setTagSchema is only valid for EXTENSION Schemas."
@@ -210,7 +209,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setKeySchema(final Schema keySchema) {
+  public Schema.Builder setKeySchema(final Schema keySchema) {
     Preconditions.checkState(
         Schema.Type.MAP == mType,
         "setKeySchema is only valid for MAP Schemas."
@@ -225,7 +224,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setValueSchema(final Schema valueSchema) {
+  public Schema.Builder setValueSchema(final Schema valueSchema) {
     Preconditions.checkState(
         Schema.Type.MAP == mType,
         "setValueSchema is only valid for MAP Schemas."
@@ -258,7 +257,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder setFieldSchema(
+  public Schema.Builder setFieldSchema(
       final String fieldName,
       final Schema fieldSchema
   ) {
@@ -311,7 +310,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
   }
 
   @Override
-  public SchemaBuilder addBranchSchema(final Schema branchSchema) {
+  public Schema.Builder addBranchSchema(final Schema branchSchema) {
     Preconditions.checkState(
         Schema.Type.UNION == mType,
         "addBranchSchema is only valid for UNION Schemas."

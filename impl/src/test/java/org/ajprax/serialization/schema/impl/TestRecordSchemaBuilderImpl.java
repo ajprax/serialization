@@ -2,14 +2,13 @@ package org.ajprax.serialization.schema.impl;
 
 import com.google.common.collect.Maps;
 import org.ajprax.serialization.schema.Schema;
-import org.ajprax.serialization.schema.SchemaBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TestRecordSchemaBuilderImpl {
   @Test
   public void testRecursiveRecord() {
-    final SchemaBuilder builder = SchemaBuilderImpl.create(Schema.Type.RECORD);
+    final Schema.Builder builder = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linked = builder
         .setName("LinkedBooleanList")
         .setFieldSchema(
@@ -35,7 +34,7 @@ public class TestRecordSchemaBuilderImpl {
         linked.getFieldSchemas().get("tail").getElementSchema().getName()
     );
 
-    final SchemaBuilder rsb = SchemaBuilderImpl.create(Schema.Type.RECORD);
+    final Schema.Builder rsb = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList = rsb
         .setName("LinkedList")
         .setFieldSchema(
@@ -43,7 +42,7 @@ public class TestRecordSchemaBuilderImpl {
             SchemaBuilderImpl
                 .create(Schema.Type.EXTENSION)
 
-                .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
+                .setTagSchema(Schema.primitive(Schema.Type.STRING))
                 .build()
         )
         .setFieldSchema(
@@ -55,7 +54,7 @@ public class TestRecordSchemaBuilderImpl {
         )
         .build();
 
-    final SchemaBuilder rsb2 = SchemaBuilderImpl.create(Schema.Type.RECORD);
+    final Schema.Builder rsb2 = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList2 = rsb2
         .setName("LinkedList")
         .setFieldSchema(
@@ -63,7 +62,7 @@ public class TestRecordSchemaBuilderImpl {
             SchemaBuilderImpl
                 .create(Schema.Type.EXTENSION)
 
-                .setTagSchema(PrimitiveSchemaImpl.create(Schema.Type.STRING))
+                .setTagSchema(Schema.primitive(Schema.Type.STRING))
                 .build()
         )
         .setFieldSchema(
@@ -81,12 +80,12 @@ public class TestRecordSchemaBuilderImpl {
     System.out.println(linkedList.toString());
     System.out.println(linkedList2.toString());
 
-    final SchemaBuilder rsb3 = SchemaBuilderImpl.create(Schema.Type.RECORD);
+    final Schema.Builder rsb3 = SchemaBuilderImpl.create(Schema.Type.RECORD);
     final Schema linkedList3 = rsb3
         .setName("LinkedList3")
         .setFieldSchema(
             "head",
-            PrimitiveSchemaImpl.create(Schema.Type.BOOLEAN)
+            Schema.primitive(Schema.Type.BOOLEAN)
         )
         .setFieldSchema(
             "tail",

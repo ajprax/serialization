@@ -36,7 +36,7 @@ public class JsonEncoders {
   // TODO look into how to improve the state of generics in this class.
   // TODO ensure that values which do not match a given schema get a useful error message.
 
-  public static final class JsonEncoderImplProvider implements JsonEncoder.Provider {
+  public static final class JsonEncoderImplFactory implements JsonEncoderFactory {
 
     @Override
     public <T> JsonEncoder<T> forSchema(final Schema schema) {
