@@ -1,5 +1,6 @@
 package org.ajprax.serialization.generic.impl;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import com.google.common.base.MoreObjects;
@@ -62,7 +63,7 @@ public class GenericExtensionImpl<TAG> implements GenericExtension<TAG> {
       return Objects.equals(this.mSchema, that.mSchema)
           // TODO if recursive tags are allowed, do we need a recursion helper for checking equality?
           && Objects.equals(this.mTag, that.mTag)
-          && Objects.equals(this.mValue, that.mValue);
+          && Arrays.equals(this.mValue, that.mValue);
     }
   }
 

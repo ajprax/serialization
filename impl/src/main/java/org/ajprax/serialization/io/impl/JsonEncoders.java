@@ -34,7 +34,7 @@ import org.ajprax.serialization.schema.Schema;
 public class JsonEncoders {
 
   // TODO look into how to improve the state of generics in this class.
-  // TODO ensure that records which do not match a given schema get a useful error message.
+  // TODO ensure that values which do not match a given schema get a useful error message.
 
   /**
    * Placeholder for a record encoder which may encode recursive records. Must be filled with a
@@ -42,14 +42,7 @@ public class JsonEncoders {
    */
   private static final class PlaceholderJsonEncoder implements JsonEncoder<Object> {
 
-    private final String mName;
     private JsonEncoder<Object> mDelegate = null;
-
-    private PlaceholderJsonEncoder(
-        final String name
-    ) {
-      mName = name;
-    }
 
     private void fill(
         final JsonEncoder<Object> delegate
@@ -87,16 +80,6 @@ public class JsonEncoders {
       b -> (b) ? BooleanNode.getTrue() : BooleanNode.getFalse();
   private static final JsonEncoder<String> STRING = TextNode::new;
 
-  private static <TAG> JsonEncoder<GenericExtension<TAG>> extension() {
-    return input -> {
-      final ObjectNode obj = JsonUtils.MAPPER.createObjectNode();
-      // TODO precalculate tag encoder.
-      obj.put("tag", forSchema(input.getSchema().getTagSchema()).encode(input.getTag()));
-      obj.put("value", new BinaryNode(input.getValue()));
-      return obj;
-    };
-  }
-
   private static <T extends Enum<T>> JsonEncoder<T> enumm(
       final String enumName
   ) {
@@ -104,6 +87,17 @@ public class JsonEncoders {
       final ObjectNode obj = JsonUtils.MAPPER.createObjectNode();
       obj.put("name", new TextNode(enumName));
       obj.put("value", new TextNode(input.name()));
+      return obj;
+    };
+  }
+
+  private static <TAG> JsonEncoder<GenericExtension<TAG>> extension(
+      final JsonEncoder<TAG> tagEncoder
+  ) {
+    return input -> {
+      final ObjectNode obj = JsonUtils.MAPPER.createObjectNode();
+      obj.put("tag", tagEncoder.encode(input.getTag()));
+      obj.put("value", new BinaryNode(input.getValue()));
       return obj;
     };
   }
@@ -268,7 +262,8 @@ public class JsonEncoders {
           return encoder;
         }
         case EXTENSION: {
-          final JsonEncoder<Object> encoder = cast(extension());
+          final JsonEncoder<Object> tagEncoder = forSchema(schema.getTagSchema(), knownSchemas);
+          final JsonEncoder<Object> encoder = cast(extension(tagEncoder));
           knownSchemas.put(schema, encoder);
           return encoder;
         }
@@ -315,7 +310,7 @@ public class JsonEncoders {
           return cast(encoder);
         }
         case RECORD: {
-          final PlaceholderJsonEncoder placeholder = new PlaceholderJsonEncoder(schema.getName());
+          final PlaceholderJsonEncoder placeholder = new PlaceholderJsonEncoder();
           knownSchemas.put(schema, placeholder);
           final Map<String, JsonEncoder<Object>> fieldEncoders = Maps.transformValues(
               schema.getFieldSchemas(),
