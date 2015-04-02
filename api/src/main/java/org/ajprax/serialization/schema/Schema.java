@@ -1,5 +1,7 @@
 package org.ajprax.serialization.schema;
 
+import java.util.ServiceLoader;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -10,8 +12,18 @@ import com.google.common.collect.ImmutableSet;
  * Provides specialization methods for dealing with non-primitive Schemas.
  */
 public interface Schema {
+  static SchemaBuilder.Provider PROVIDER = ServiceLoader.load(SchemaBuilder.Provider.class).iterator().next();
+
+  static SchemaBuilder builder(Type type) {
+    return PROVIDER.builder(type);
+  }
+
+  static Schema primitive(Type type) {
+    return builder(type).build();
+  }
+
   /** Schema types. */
-  public enum Type {
+  enum Type {
     UNSIGNED_8,
     UNSIGNED_16,
     UNSIGNED_32,

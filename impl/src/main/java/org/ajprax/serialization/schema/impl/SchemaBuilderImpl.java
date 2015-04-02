@@ -12,9 +12,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.ajprax.serialization.schema.Schema;
+import org.ajprax.serialization.schema.Schema.Type;
 import org.ajprax.serialization.schema.SchemaBuilder;
 
 public final class SchemaBuilderImpl implements SchemaBuilder {
+
+  public static final class SchemaBuilderImplProvider implements SchemaBuilder.Provider {
+
+    @Override
+    public SchemaBuilder builder(final Type type) {
+      return SchemaBuilderImpl.create(type);
+    }
+  }
 
   private static Set<Schema.Type> PRIMITIVE_SCHEMA_TYPES = Sets.newHashSet(
       Schema.Type.UNSIGNED_8,
@@ -294,7 +303,7 @@ public final class SchemaBuilderImpl implements SchemaBuilder {
     if (null == mPlaceholderSchema) {
       Preconditions.checkState(
           null != mName,
-          "May not create a placeholder Schema with name unset."
+          "May not builder a placeholder Schema with name unset."
       );
       mPlaceholderSchema = RecordSchemaImpl.create(mName);
     }

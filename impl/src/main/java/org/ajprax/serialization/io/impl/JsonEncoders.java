@@ -36,6 +36,14 @@ public class JsonEncoders {
   // TODO look into how to improve the state of generics in this class.
   // TODO ensure that values which do not match a given schema get a useful error message.
 
+  public static final class JsonEncoderImplProvider implements JsonEncoder.Provider {
+
+    @Override
+    public <T> JsonEncoder<T> forSchema(final Schema schema) {
+      return cast(JsonEncoders.forSchema(schema, Maps.newHashMap()));
+    }
+  }
+
   /**
    * Placeholder for a record encoder which may encode recursive records. Must be filled with a
    * concrete record encoder before it can be used.
@@ -199,7 +207,7 @@ public class JsonEncoders {
    *
    * TODO clean up implementation.
    *
-   * @param schema Schema for which to create an encoder.
+   * @param schema Schema for which to builder an encoder.
    * @param knownSchemas Schemas which have already been seen during the creation of this encoder.
    * @return A JsonEncoder for the given Schema.
    */
@@ -323,20 +331,6 @@ public class JsonEncoders {
         default: throw new RuntimeException(String.format("Unknown schema type: '%s'", schema.getType()));
       }
     }
-  }
-
-  /**
-   * Create a JsonEncoder for the given Schema.
-   *
-   * @param schema Schema for which to create a JsonEncoder.
-   * @param <T> Type of the values which will be encoded to Json. The caller is responsible for
-   *     ensuring that this type is compatible with the given Schema.
-   * @return A JsonEncoder for the given Schema.
-   */
-  public static <T> JsonEncoder<T> forSchema(
-      final Schema schema
-  ) {
-    return cast(forSchema(schema, Maps.newHashMap()));
   }
 
   private JsonEncoders() { }

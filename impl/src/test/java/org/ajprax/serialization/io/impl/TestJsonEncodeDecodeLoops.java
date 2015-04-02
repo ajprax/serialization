@@ -35,8 +35,8 @@ public class TestJsonEncodeDecodeLoops {
       final Schema schema,
       final T input
   ) {
-    final JsonEncoder<T> encoder = JsonEncoders.forSchema(schema);
-    final JsonDecoder<T> decoder = JsonDecoders.forSchema(schema);
+    final JsonEncoder<T> encoder = JsonEncoder.forSchema(schema);
+    final JsonDecoder<T> decoder = JsonDecoder.forSchema(schema);
     Assert.assertEquals(input, decoder.decode(encoder.encode(input)));
   }
 
@@ -44,8 +44,8 @@ public class TestJsonEncodeDecodeLoops {
       final Schema.Type type
   ) {
     try {
-      JsonEncoders.forSchema(PrimitiveSchemaImpl.create(type));
-      JsonDecoders.forSchema(PrimitiveSchemaImpl.create(type));
+      JsonEncoder.forSchema(PrimitiveSchemaImpl.create(type));
+      JsonDecoder.forSchema(PrimitiveSchemaImpl.create(type));
     } catch (UnsupportedOperationException uoe) {
       Assert.assertEquals(
           String.format("Schema type: '%s' is unsupported in Java.", type.name()),

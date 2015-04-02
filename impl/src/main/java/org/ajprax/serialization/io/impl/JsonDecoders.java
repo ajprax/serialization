@@ -34,6 +34,14 @@ public class JsonDecoders {
   // TODO many of these decoders will return values instead of type errors
   // (e.g. TextNode("hi").longValue() == 0)
 
+  public static final class JsonDecoderImplProvider implements JsonDecoder.Provider {
+
+    @Override
+    public <T> JsonDecoder<T> forSchema(final Schema schema) {
+      return cast(JsonDecoders.forSchema(schema, Maps.newHashMap()));
+    }
+  }
+
   private static final class PlaceholderJsonDecoder implements JsonDecoder<Object> {
 
     private JsonDecoder<Object> mDelegate = null;
@@ -298,12 +306,6 @@ public class JsonDecoders {
         default: throw new RuntimeException(String.format("Unknown schema type: '%s'", schema.getType()));
       }
     }
-  }
-
-  public static <T> JsonDecoder<T> forSchema(
-      final Schema schema
-  ) {
-    return cast(forSchema(schema, Maps.newHashMap()));
   }
 
   private JsonDecoders() { }

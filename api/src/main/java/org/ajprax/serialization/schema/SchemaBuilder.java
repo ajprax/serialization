@@ -54,4 +54,14 @@ public interface SchemaBuilder {
    * @return The newly built Schema.
    */
   Schema build();
+
+  /**
+   * Provider interface which allows SchemaBuilder implementations to be created from the API package
+   * via service loading.
+   *
+   * Users should not override this class.
+   */
+  interface Provider {
+    SchemaBuilder builder(Schema.Type type);
+  }
 }

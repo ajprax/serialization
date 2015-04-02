@@ -22,7 +22,6 @@ import org.ajprax.serialization.schema.impl.ArraySchemaImpl;
 import org.ajprax.serialization.schema.impl.EnumSchemaImpl;
 import org.ajprax.serialization.schema.impl.ExtensionSchemaImpl;
 import org.ajprax.serialization.schema.impl.FixedSizeArraySchemaImpl;
-import org.ajprax.serialization.schema.impl.MapSchemaImpl;
 import org.ajprax.serialization.schema.impl.OptionalSchemaImpl;
 import org.ajprax.serialization.schema.impl.PrimitiveSchemaImpl;
 import org.ajprax.serialization.schema.impl.SchemaBuilderImpl;
@@ -32,9 +31,13 @@ import org.junit.Test;
 public class TestJsonEncoders {
   @Test
   public void testMap() {
-    final Schema mapSchema = MapSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING), PrimitiveSchemaImpl.create(Type.SIGNED_32));
+    final Schema schema = Schema.builder(Type.MAP)
+        .setKeySchema(Schema.primitive(Type.STRING))
+        .setValueSchema(Schema.primitive(Type.SIGNED_32))
+        .build();
+
     final Map<String, Integer> map = ImmutableMap.of("a", 1, "b", 2);
-    final JsonEncoder<Map<String, Integer>> encoder = JsonEncoders.forSchema(mapSchema);
+    final JsonEncoder<Map<String, Integer>> encoder = JsonEncoder.forSchema(schema);
     final String expected = "[{\"k\":\"a\",\"v\":1},{\"k\":\"b\",\"v\":2}]";
     final String actual = encoder.encode(map).toString();
     Assert.assertEquals(expected, actual);
@@ -42,9 +45,15 @@ public class TestJsonEncoders {
 
   @Test
   public void testNestedArrays() {
-    final Schema nestedSchema = ArraySchemaImpl.create(ArraySchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING)));
+    final Schema schema = Schema.builder(Type.ARRAY)
+        .setElementSchema(
+            Schema.builder(Type.ARRAY)
+                .setElementSchema(Schema.primitive(Type.STRING))
+                .build()
+        )
+        .build();
     final List<List<String>> nested = Lists.newArrayList(Lists.newArrayList(), Lists.newArrayList("a"), Lists.newArrayList("a", "b"));
-    final JsonEncoder<List<List<String>>> encoder = JsonEncoders.forSchema(nestedSchema);
+    final JsonEncoder<List<List<String>>> encoder = JsonEncoder.forSchema(schema);
     final String expected = "[[],[\"a\"],[\"a\",\"b\"]]";
     final String actual = encoder.encode(nested).toString();
     Assert.assertEquals(expected, actual);
@@ -53,7 +62,7 @@ public class TestJsonEncoders {
   @Test
   public void testFixedSizeArrays() {
     final Schema fixedSizeSchema = FixedSizeArraySchemaImpl.create(2, PrimitiveSchemaImpl.create(Type.STRING));
-    final JsonEncoder<List<String>> encoder = JsonEncoders.forSchema(fixedSizeSchema);
+    final JsonEncoder<List<String>> encoder = JsonEncoder.forSchema(fixedSizeSchema);
 
     {
       final List<String> correct = Lists.newArrayList("a", "b");
@@ -75,7 +84,7 @@ public class TestJsonEncoders {
   public void testTypeMismatch() {
     final Schema arraySchema = ArraySchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
     final List<Integer> list = Lists.newArrayList(1, 2);
-    final JsonEncoder<List<Integer>> encoder = JsonEncoders.forSchema(arraySchema);
+    final JsonEncoder<List<Integer>> encoder = JsonEncoder.forSchema(arraySchema);
     try {
       encoder.encode(list);
     } catch (ClassCastException cce) {
@@ -95,7 +104,7 @@ public class TestJsonEncoders {
   public void testEnum() {
     final ImmutableSet<String> values = ImmutableSet.copyOf(ImmutableSet.copyOf(Weekdays.values()).stream().map(Enum::name).collect(Collectors.toSet()));
     final Schema schema = EnumSchemaImpl.create(Weekdays.class.getName(), values);
-    final JsonEncoder<Weekdays> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<Weekdays> encoder = JsonEncoder.forSchema(schema);
     final String expected = String.format("{\"name\":\"%s\",\"value\":\"MONDAY\"}", Weekdays.class.getName());
     final String actual = encoder.encode(Weekdays.MONDAY).toString();
     Assert.assertEquals(expected, actual);
@@ -125,7 +134,7 @@ public class TestJsonEncoders {
             ))
         )
     );
-    final JsonEncoder<GenericRecord> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<GenericRecord> encoder = JsonEncoder.forSchema(schema);
     final String expected = "{\"a\":\"a_value\",\"b\":true,\"c\":{\"c1\":4,\"c2\":1.5}}";
     final String actual = encoder.encode(record).toString();
     Assert.assertEquals(expected, actual);
@@ -138,7 +147,7 @@ public class TestJsonEncoders {
         .setFieldSchema("head", PrimitiveSchemaImpl.create(Type.STRING))
         .setFieldSchema("tail", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
         .build();
-    final JsonEncoder<GenericRecord> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<GenericRecord> encoder = JsonEncoder.forSchema(schema);
 
     final GenericRecord record = GenericRecordImpl.create(
         schema,
@@ -178,7 +187,7 @@ public class TestJsonEncoders {
     final Schema schema1 = builder1.build();
     final Schema schema2 = builder2.build();
 
-    final JsonEncoder<GenericRecord> encoder1 = JsonEncoders.forSchema(schema1);
+    final JsonEncoder<GenericRecord> encoder1 = JsonEncoder.forSchema(schema1);
 
     final GenericRecord record = GenericRecordImpl.create(
         schema1,
@@ -226,7 +235,7 @@ public class TestJsonEncoders {
         .setFieldSchema("tail_one", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
         .setFieldSchema("tail_two", OptionalSchemaImpl.create(builder.getPlaceholderSchema()))
         .build();
-    final JsonEncoder<GenericRecord> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<GenericRecord> encoder = JsonEncoder.forSchema(schema);
     final GenericRecord record = GenericRecordImpl.create(
         schema,
         ImmutableMap.of(
@@ -264,7 +273,7 @@ public class TestJsonEncoders {
         .addBranchSchema(PrimitiveSchemaImpl.create(Type.STRING))
         .addBranchSchema(PrimitiveSchemaImpl.create(Type.BOOLEAN))
         .build();
-    final JsonEncoder<GenericUnion> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<GenericUnion> encoder = JsonEncoder.forSchema(schema);
 
     {
       final GenericUnion union = GenericUnionImpl.create(schema, 0, "a_value");
@@ -283,7 +292,7 @@ public class TestJsonEncoders {
   @Test
   public void testOptional() {
     final Schema schema = OptionalSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
-    final JsonEncoder<Optional<String>> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<Optional<String>> encoder = JsonEncoder.forSchema(schema);
     {
       final Optional<String> present = Optional.of("a_value");
       final String expected = "\"a_value\"";
@@ -301,7 +310,7 @@ public class TestJsonEncoders {
   @Test
   public void testExtension() {
     final Schema schema = ExtensionSchemaImpl.create(PrimitiveSchemaImpl.create(Type.STRING));
-    final JsonEncoder<GenericExtension<String>> encoder = JsonEncoders.forSchema(schema);
+    final JsonEncoder<GenericExtension<String>> encoder = JsonEncoder.forSchema(schema);
     final GenericExtension<String> extension = GenericExtensionImpl.create(schema, "tag", new byte[]{1, 2, 3});
     final String expected = "{\"tag\":\"tag\",\"value\":\"AQID\"}";
     final String actual = encoder.encode(extension).toString();
