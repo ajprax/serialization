@@ -25,6 +25,7 @@ public class GenericRecordImpl implements GenericRecord {
   ) {
     mSchema = schema;
     mValue = value;
+    // TODO ensure that values match the schema, do necessary number conversion?
   }
 
   @SuppressWarnings("unchecked")

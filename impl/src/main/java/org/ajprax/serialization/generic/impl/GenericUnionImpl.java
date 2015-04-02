@@ -13,26 +13,26 @@ public class GenericUnionImpl implements GenericUnion {
       final int branchIndex,
       final Object value
   ) {
-    return new GenericUnionImpl(schema, schema.getBranchSchemas().get(branchIndex), value);
+    return new GenericUnionImpl(schema, branchIndex, value);
   }
 
   private final Schema mSchema;
-  private final Schema mBranchSchema;
+  private final int mBranchIndex;
   private final Object mValue;
 
   private GenericUnionImpl(
       final Schema schema,
-      final Schema branchSchema,
+      final int branchIndex,
       final Object value
   ) {
     mSchema = schema;
-    mBranchSchema = branchSchema;
+    mBranchIndex = branchIndex;
     mValue = value;
   }
 
   @Override
-  public Schema getBranchSchema() {
-    return mBranchSchema;
+  public int getBranchIndex() {
+    return mBranchIndex;
   }
 
   @SuppressWarnings("unchecked")
@@ -53,7 +53,7 @@ public class GenericUnionImpl implements GenericUnion {
 
   @Override
   public int hashCode() {
-    return Objects.hash(mSchema, mBranchSchema, mValue);
+    return Objects.hash(mSchema, mBranchIndex, mValue);
   }
 
   @Override
@@ -66,7 +66,7 @@ public class GenericUnionImpl implements GenericUnion {
     } else {
       final GenericUnionImpl that = (GenericUnionImpl) obj;
       return Objects.equals(this.mSchema, that.mSchema)
-          && Objects.equals(this.mBranchSchema, that.mBranchSchema)
+          && Objects.equals(this.mBranchIndex, that.mBranchIndex)
           // TODO if recursive values are allowed, do we need a recursion helper for checking equality?
           && Objects.equals(this.mValue, that.mValue);
     }
@@ -76,7 +76,7 @@ public class GenericUnionImpl implements GenericUnion {
   public String toString() {
     return MoreObjects.toStringHelper(getClass())
         .add("schema", mSchema)
-        .add("branch_schema", mBranchSchema)
+        .add("branch_schema", mBranchIndex)
         .add("value", mValue)
         .toString();
   }

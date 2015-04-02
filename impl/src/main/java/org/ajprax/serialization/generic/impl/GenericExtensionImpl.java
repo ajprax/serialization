@@ -6,24 +6,24 @@ import com.google.common.base.MoreObjects;
 import org.ajprax.serialization.generic.GenericExtension;
 import org.ajprax.serialization.schema.Schema;
 
-public class GenericExtensionImpl<TAG, VALUE> implements GenericExtension<TAG, VALUE> {
+public class GenericExtensionImpl<TAG> implements GenericExtension<TAG> {
 
-  public static <T, V> GenericExtensionImpl<T, V> create(
+  public static <T> GenericExtensionImpl<T> create(
       final Schema schema,
       final T tag,
-      final V value
+      final byte[] value
   )  {
     return new GenericExtensionImpl<>(schema, tag, value);
   }
 
   private final Schema mSchema;
   private final TAG mTag;
-  private final VALUE mValue;
+  private final byte[] mValue;
 
   public GenericExtensionImpl(
       final Schema schema,
       final TAG tag,
-      final VALUE value
+      final byte[] value
   ) {
     mSchema = schema;
     mTag = tag;
@@ -41,7 +41,7 @@ public class GenericExtensionImpl<TAG, VALUE> implements GenericExtension<TAG, V
   }
 
   @Override
-  public VALUE getValue() {
+  public byte[] getValue() {
     return mValue;
   }
 
@@ -58,9 +58,9 @@ public class GenericExtensionImpl<TAG, VALUE> implements GenericExtension<TAG, V
     if (null == obj || !obj.getClass().equals(getClass())) {
       return false;
     } else {
-      final GenericExtensionImpl<?, ?> that = (GenericExtensionImpl<?, ?>) obj;
+      final GenericExtensionImpl<?> that = (GenericExtensionImpl<?>) obj;
       return Objects.equals(this.mSchema, that.mSchema)
-          // TODO if recursive tags or values are allowed, do we need a recursion helper for checking equality?
+          // TODO if recursive tags are allowed, do we need a recursion helper for checking equality?
           && Objects.equals(this.mTag, that.mTag)
           && Objects.equals(this.mValue, that.mValue);
     }
