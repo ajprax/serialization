@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.ajprax.serialization.io.impl.JsonEncoderFactory;
 import org.ajprax.serialization.schema.Schema;
 
-public interface JsonEncoder<I> extends Encoder<I, JsonNode> {
+public interface JsonEncoder<U> extends Encoder<U, JsonNode> {
   static <T> JsonEncoder<T> forSchema(
       final Schema schema
   ) {

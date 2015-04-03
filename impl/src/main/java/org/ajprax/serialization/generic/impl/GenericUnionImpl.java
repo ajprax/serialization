@@ -35,12 +35,6 @@ public class GenericUnionImpl implements GenericUnion {
     return mBranchIndex;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T getTypedValue() {
-    return (T) mValue;
-  }
-
   @Override
   public Schema getSchema() {
     return mSchema;

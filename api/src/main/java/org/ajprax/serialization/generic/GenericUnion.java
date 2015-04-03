@@ -9,5 +9,8 @@ public interface GenericUnion extends GenericValue<Object> {
     return getSchema().getBranchSchemas().get(getBranchIndex());
   }
 
-  <T> T getTypedValue();
+  @SuppressWarnings("unchecked")
+  default <T> T getTypedValue() {
+    return (T) getValue();
+  }
 }

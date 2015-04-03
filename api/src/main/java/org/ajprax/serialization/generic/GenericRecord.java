@@ -8,5 +8,8 @@ public interface GenericRecord extends GenericValue<ImmutableMap<String, Object>
     return getSchema().getFieldSchemas().get(fieldName);
   }
 
-  <T> T get(String fieldName);
+  @SuppressWarnings("unchecked")
+  default <T> T get(String fieldName) {
+    return (T) getValue().get(fieldName);
+  }
 }

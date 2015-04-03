@@ -1,3 +1,3 @@
 package org.ajprax.serialization.io;
 
-public interface BinaryEncoder<I> extends Encoder<I, byte[]> { }
+public interface BinaryEncoder<T> extends Encoder<T, byte[]> { }

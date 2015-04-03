@@ -1,3 +1,3 @@
 package org.ajprax.serialization.io;
 
-public interface BinaryDecoder<O> extends Decoder<byte[], O> { }
+public interface BinaryDecoder<U> extends Decoder<byte[], U> { }

@@ -28,12 +28,6 @@ public class GenericRecordImpl implements GenericRecord {
     // TODO ensure that values match the schema, do necessary number conversion?
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T get(final String fieldName) {
-    return (T) mValue.get(fieldName);
-  }
-
   @Override
   public Schema getSchema() {
     return mSchema;
