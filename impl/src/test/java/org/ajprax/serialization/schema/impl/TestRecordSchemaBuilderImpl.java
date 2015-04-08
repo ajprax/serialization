@@ -96,4 +96,9 @@ public class TestRecordSchemaBuilderImpl {
     System.out.println(linkedList3.hashCode());
     System.out.println(linkedList3.equals(linkedList2));
   }
+
+  @Test
+  public void test() {
+    System.out.println(Temp.SCHEMA_SCHEMA);
+  }
 }

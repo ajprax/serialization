@@ -302,7 +302,7 @@ public final class SchemaBuilderImpl implements Schema.Builder {
     if (null == mPlaceholderSchema) {
       Preconditions.checkState(
           null != mName,
-          "May not builder a placeholder Schema with name unset."
+          "May not build a placeholder Schema with name unset."
       );
       mPlaceholderSchema = RecordSchemaImpl.create(mName);
     }

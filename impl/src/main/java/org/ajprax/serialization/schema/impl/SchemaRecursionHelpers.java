@@ -358,7 +358,7 @@ public final class SchemaRecursionHelpers {
           return hashCode;
         }
         case MAP: {
-          final int hashCode = Objects.hash(schema.getType(), hashCode(schema.getKeySchema(), knownSchemas), hashCode(schema.getValueSchema()));
+          final int hashCode = Objects.hash(schema.getType(), hashCode(schema.getKeySchema(), knownSchemas), hashCode(schema.getValueSchema(), knownSchemas));
           knownSchemas.put(schema, Optional.of(hashCode));
           return hashCode;
         }
